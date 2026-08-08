@@ -1,0 +1,2690 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestión Comercial Biogreen</title>
+<style>
+  :root{
+    --bg:#F5F7F3; --surface:#FFFFFF; --surface-2:#FBFCFA; --border:#DDE4D7;
+    --text:#14201A; --muted:#566257; --faint:#8A968B;
+    --accent:#00873E; --accent-dark:#006D30; --accent-soft:#E1F1E5;
+    --good:#2F8F4E; --warn:#B7791F; --warn-soft:#F7ECD3; --bad:#B34A3B; --bad-soft:#F4DED8;
+    --shadow:0 1px 2px rgba(20,32,26,.04), 0 6px 20px rgba(20,32,26,.05);
+    --radius:14px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0E1310; --surface:#161F19; --surface-2:#12190F; --border:#293429;
+      --text:#E7EEE7; --muted:#98A79A; --faint:#6B7A6D;
+      --accent:#38B76A; --accent-dark:#2C9A57; --accent-soft:#16281C;
+      --good:#4FBE73; --warn:#D9A441; --warn-soft:#2A2313; --bad:#D2695A; --bad-soft:#33201C;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F7F3; --surface:#FFFFFF; --surface-2:#FBFCFA; --border:#DDE4D7;
+    --text:#14201A; --muted:#566257; --faint:#8A968B;
+    --accent:#00873E; --accent-dark:#006D30; --accent-soft:#E1F1E5;
+    --good:#2F8F4E; --warn:#B7791F; --warn-soft:#F7ECD3; --bad:#B34A3B; --bad-soft:#F4DED8;
+    --shadow:0 1px 2px rgba(20,32,26,.04), 0 6px 20px rgba(20,32,26,.05);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1310; --surface:#161F19; --surface-2:#12190F; --border:#293429;
+    --text:#E7EEE7; --muted:#98A79A; --faint:#6B7A6D;
+    --accent:#38B76A; --accent-dark:#2C9A57; --accent-soft:#16281C;
+    --good:#4FBE73; --warn:#D9A441; --warn-soft:#2A2313; --bad:#D2695A;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--bg); color:var(--text); font-family:var(--font);
+    line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px; margin:0 auto; padding:clamp(18px,4vw,28px) clamp(14px,4vw,22px) 64px;}
+
+  /* Header */
+  header.top{display:flex; align-items:center; gap:14px;}
+  .brand-logo{height:clamp(38px,8vw,46px); width:auto; display:block; flex:none;}
+  .titles{display:flex; flex-direction:column; gap:2px; min-width:0; flex:1 1 0;}
+  h1{font-size:clamp(1.5rem,1.1rem + 1.6vw,2.05rem); font-weight:300;
+    letter-spacing:-.01em; margin:0; text-wrap:balance;}
+  h1 b{font-weight:600; color:var(--accent);}
+  .subtitle{color:var(--muted); font-size:.9rem; letter-spacing:.01em;}
+  .theme-btn{margin-left:auto; background:var(--surface); border:1px solid var(--border);
+    color:var(--muted); width:38px; height:38px; border-radius:10px; cursor:pointer;
+    font-size:1.05rem; display:grid; place-items:center; transition:.15s;}
+  .theme-btn:hover{color:var(--accent); border-color:var(--accent);}
+
+  /* Tabs */
+  .tabs{display:flex; gap:4px; margin:26px 0 20px; border-bottom:1px solid var(--border);
+    overflow-x:auto; scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{appearance:none; background:none; border:none; cursor:pointer; font-family:inherit;
+    font-size:.95rem; font-weight:500; color:var(--muted); padding:11px 18px;
+    border-bottom:2px solid transparent; margin-bottom:-1px; transition:.15s; border-radius:8px 8px 0 0;
+    white-space:nowrap; flex:none;}
+  .tab:hover{color:var(--text); background:var(--surface-2);}
+  .tab[aria-selected="true"]{color:var(--accent); border-bottom-color:var(--accent);}
+
+  .panel[hidden]{display:none;}
+
+  /* Card */
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:clamp(16px,3.5vw,20px) clamp(16px,3.5vw,22px);}
+  .card + .card{margin-top:20px;}
+  .card-head{display:flex; align-items:baseline; gap:10px; margin-bottom:4px;}
+  .card-head h2{font-size:1.02rem; font-weight:600; margin:0; letter-spacing:-.005em;}
+  .card-head .hint{color:var(--faint); font-size:.82rem;}
+  .eyebrow{font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:10px;}
+
+  /* Form */
+  .field-grid{display:grid; gap:12px 18px;}
+  .cycle-grid{grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); margin-bottom:14px;}
+  .meta-grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));}
+  .field{display:flex; flex-direction:column; gap:5px;}
+  .field label{font-size:.8rem; font-weight:500; color:var(--muted); letter-spacing:.01em;}
+  .field .lbl-row{display:flex; align-items:center; gap:6px;}
+  .field .tag{font-size:.62rem; font-weight:700; letter-spacing:.05em; padding:1px 6px;
+    border-radius:5px; background:var(--accent-soft); color:var(--accent-dark);}
+  .input-shell{display:flex; align-items:center; background:var(--surface-2);
+    border:1px solid var(--border); border-radius:10px; transition:.15s;}
+  .input-shell:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .input-shell .prefix{padding:0 0 0 12px; color:var(--faint); font-size:.92rem; font-weight:500;}
+  .input-shell input{flex:1; min-width:0; appearance:none; background:none; border:none;
+    color:var(--text); font-family:inherit; font-size:.98rem; padding:9px 12px; outline:none;
+    font-variant-numeric:tabular-nums;}
+  .input-shell input::placeholder{color:var(--faint);}
+  .input-shell select{flex:1; min-width:0; appearance:none; background:none; border:none;
+    color:var(--text); font-family:inherit; font-size:.98rem; padding:9px 12px; outline:none; cursor:pointer;}
+  .input-shell .chev{pointer-events:none; padding-right:12px; color:var(--faint); display:flex; align-items:center;}
+
+  /* Segmented toggle */
+  .seg{display:flex; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:10px; padding:3px; gap:3px;}
+  .seg-opt{flex:1; appearance:none; background:none; border:none; font-family:inherit;
+    font-size:.9rem; font-weight:500; color:var(--muted); padding:7px 10px; border-radius:7px;
+    cursor:pointer; transition:.15s;}
+  .seg-opt:hover{color:var(--text);}
+  .seg-opt[aria-pressed="true"]{background:var(--accent); color:#fff;}
+
+  /* Actions */
+  .actions{display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; align-items:center;}
+  .btn{appearance:none; font-family:inherit; font-size:.92rem; font-weight:600; cursor:pointer;
+    border-radius:10px; padding:11px 22px; border:1px solid transparent; transition:.15s;}
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-primary:active{transform:translateY(1px);}
+  .btn-ghost{background:transparent; color:var(--muted); border-color:var(--border);}
+  .btn-ghost:hover{color:var(--bad); border-color:var(--bad);}
+  .save-note{color:var(--muted); font-size:.82rem; margin-left:auto;}
+  .save-note b{color:var(--good); font-weight:600;}
+
+  /* Compact saved banner */
+  .saved-banner{background:linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    border-radius:var(--radius); padding:16px 22px 18px; color:#fff; box-shadow:var(--shadow);}
+  .sb-top{display:flex; align-items:center; justify-content:center; gap:12px; position:relative; flex-wrap:wrap;}
+  .sb-title{font-size:1.2rem; font-weight:600; margin:0; color:#fff; letter-spacing:-.01em;}
+  .sb-badge{display:inline-flex; align-items:center; gap:5px; background:#fff; color:var(--accent-dark);
+    font-size:.78rem; font-weight:700; padding:4px 12px; border-radius:999px; white-space:nowrap;}
+  .sb-check{color:var(--accent);}
+  .sb-edit{position:absolute; right:0; top:50%; transform:translateY(-50%);
+    background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.28);
+    font-family:inherit; font-size:.8rem; font-weight:600; padding:6px 14px; border-radius:8px;
+    cursor:pointer; transition:.15s;}
+  .sb-edit:hover{background:rgba(255,255,255,.28);}
+  .sb-sub{text-align:center; color:rgba(255,255,255,.92); font-size:.85rem; margin-top:8px;}
+  .sb-sub b{color:#fff; font-weight:600;}
+  .sb-sub .sep{opacity:.55; margin:0 6px;}
+  .sb-tiles{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:14px;}
+  .sb-tile{background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.17);
+    border-radius:10px; padding:9px 12px 11px; text-align:center;}
+  .sb-tile .t-label{display:flex; align-items:center; justify-content:center; gap:5px;
+    font-size:.66rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:rgba(255,255,255,.85);}
+  .sb-tile .t-value{font-size:1.3rem; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; line-height:1.2;}
+  .sb-tile .t-value.is-empty{opacity:.55; font-weight:500;}
+  @media (max-width:620px){
+    .sb-tiles{grid-template-columns:repeat(2,1fr);}
+    .sb-top{flex-direction:column; gap:8px;}
+    .sb-edit{position:static; transform:none;}
+    .actions .btn{flex:1 1 auto;}
+    .save-note{margin-left:0; width:100%;}
+  }
+  @media (max-width:400px){
+    .sb-tiles{grid-template-columns:1fr;}
+    .sb-title{font-size:1.05rem;}
+    .sb-sub{font-size:.8rem;}
+    .empty{padding:40px 16px;}
+  }
+
+  /* Projection metrics (catálogo config) */
+  .projmet-section{margin-top:20px;}
+  .pm-topgrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+  .pm-cp-pair{display:flex; gap:8px;}
+  .pm-cp-pair .input-shell{flex:1 1 0; min-width:0;}
+  .pm-cp-pair .input-shell:first-child{flex:0 1 44%;}
+  .pm-total{display:flex; align-items:center; padding:9px 14px; background:var(--accent-soft);
+    color:var(--accent-dark); border:1px solid var(--border); border-radius:10px;
+    font-size:.95rem; font-variant-numeric:tabular-nums; flex-wrap:wrap; gap:4px;}
+  .pm-total b{font-weight:700;}
+  .pm-warn{margin-top:14px; padding:10px 14px; border:1px solid var(--warn); background:var(--warn-soft);
+    color:var(--warn); border-radius:10px; font-size:.85rem; display:flex; align-items:center; gap:8px;}
+  .pm-warn::before{content:"⚠"; font-size:1rem;}
+  .pm-rows{margin-top:14px; border:1px solid var(--border); border-radius:12px;
+    padding:2px 14px; background:var(--surface-2);}
+  .pm-row-lbl-num{color:var(--faint); font-weight:500; font-size:.8rem; margin-left:6px;}
+  .pm-row{display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:10px 0; border-bottom:1px solid var(--border);}
+  .pm-row:last-child{border-bottom:none;}
+  .pm-row-label{font-size:.9rem; font-weight:600; color:var(--text);}
+  .pm-fixed{display:inline-flex; align-items:center; gap:5px; font-size:.82rem; font-weight:500;
+    background:var(--surface); border:1px solid var(--border); color:var(--muted);
+    padding:6px 12px; border-radius:8px;}
+  .pm-fixed b{color:var(--text); font-weight:700;}
+  .pm-row .seg{padding:2px;}
+  .pm-row .seg-opt{padding:5px 14px; font-size:.82rem;}
+  .pm-actions{display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap;}
+  .pm-actions .save-note{margin-left:auto;}
+  @media (max-width:520px){
+    .pm-row{flex-direction:column; align-items:flex-start; gap:8px;}
+    .pm-row .seg{width:100%;}
+    .pm-actions .btn{width:100%;}
+    .pm-actions .save-note{margin-left:0; width:100%;}
+  }
+
+  /* Fila actual en edit view */
+  .pm-row.pm-row-current{background:linear-gradient(90deg,var(--accent-soft), transparent 70%);
+    margin:0 -14px; padding-left:14px; padding-right:14px; border-radius:8px;}
+  .pm-row-current .pm-row-label::after{content:"ahora"; margin-left:8px; font-size:.62rem; font-weight:700;
+    letter-spacing:.05em; text-transform:uppercase; color:#fff; background:var(--accent);
+    padding:2px 7px; border-radius:5px;}
+
+  /* Métricas para proyectar — vista guardada (compacta) */
+  #pmSaved{margin-top:-6px;}
+  .pm-saved-row{display:flex; align-items:center; flex-wrap:wrap; gap:8px;}
+  .pm-saved-pill{display:inline-flex; align-items:center; gap:6px; background:var(--accent-soft);
+    border:1px solid var(--border); border-radius:8px; padding:5px 10px;}
+  .pm-saved-key{font-size:.6rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--accent-dark); opacity:.75;}
+  .pm-saved-val{font-size:.85rem; font-weight:700; color:var(--accent-dark); font-variant-numeric:tabular-nums;}
+  .pm-saved-arrow{color:var(--faint); font-weight:600; font-size:.9rem;}
+  .pm-saved-total{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums; padding:0 4px;}
+  .pm-saved-total b{color:var(--text); font-weight:700;}
+  .pm-saved-current{display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff;
+    padding:5px 10px; border-radius:8px;}
+  .pmc-key{font-size:.6rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; opacity:.85;}
+  .pmc-name{font-size:.85rem; font-weight:700;}
+  .pmc-tag{font-size:.72rem; opacity:.95; font-variant-numeric:tabular-nums; background:rgba(255,255,255,.2); padding:1px 7px; border-radius:999px;}
+  .pm-edit-btn{margin-left:auto; padding:6px 14px; font-size:.82rem;}
+  @media (max-width:520px){
+    .pm-saved-arrow{display:none;}
+    .pm-edit-btn{margin-left:0; width:100%;}
+  }
+
+  /* Transcurso del ciclo */
+  .tc-section{margin-top:20px;}
+  .tc-empty{color:var(--muted); font-size:.88rem; text-align:center; padding:12px 0;}
+  .tc-head{display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;}
+  .tc-day-block{display:flex; flex-direction:column;}
+  .tc-eyebrow{font-size:.68rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); margin-bottom:2px;}
+  .tc-day-big{font-size:1.6rem; font-weight:300; letter-spacing:-.02em; color:var(--text); line-height:1.1;}
+  .tc-day-big b{font-weight:700; color:var(--accent-dark); font-variant-numeric:tabular-nums;}
+  .tc-of{color:var(--muted); font-size:.9rem;}
+  .tc-remaining{color:var(--muted); font-size:.85rem; margin-left:4px;}
+  .tc-dates{display:grid; grid-template-columns:repeat(4, auto); gap:6px 22px; align-items:start;}
+  .tc-dates > div{display:flex; flex-direction:column;}
+  .tc-key{font-size:.7rem; font-weight:700; letter-spacing:.03em; color:var(--muted); margin-bottom:1px;}
+  .tc-val{font-size:.85rem; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums;}
+
+  .tc-bar-block{margin-top:14px;}
+  .tc-bar{position:relative; height:12px; background:var(--accent-soft); border-radius:999px; overflow:hidden; border:1px solid var(--border);}
+  .tc-bar-fill{height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-dark)); border-radius:999px; transition:width .5s ease;}
+  .tc-bar-labels{display:flex; justify-content:space-between; align-items:baseline; margin-top:6px; font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .tc-pct{color:var(--accent-dark); font-weight:700; font-size:.85rem;}
+
+  .tc-weeks{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;}
+  .tc-week{display:flex; align-items:center; gap:4px; border:1.5px solid var(--border); border-radius:10px; padding:5px;}
+  .tc-week-label{display:flex; flex-direction:column; padding:5px 10px; border-radius:6px; background:var(--surface-2); align-self:stretch; justify-content:center; min-width:56px;}
+  .tc-week-label b{font-size:.78rem; font-weight:700; color:var(--muted); line-height:1.1;}
+  .tc-week-label span{font-size:.62rem; color:var(--muted); margin-top:2px; white-space:nowrap;}
+  .tc-week.past{border-color:var(--accent);}
+  .tc-week.past .tc-week-label{background:var(--accent-soft);}
+  .tc-week.past .tc-week-label b{color:var(--accent-dark);}
+  .tc-week.current{border-color:#B7791F;}
+  .tc-week.current .tc-week-label{background:var(--warn-soft);}
+  .tc-week.current .tc-week-label b{color:#B7791F;}
+  .tc-day-box{width:26px; height:26px; display:grid; place-items:center; border:1px solid var(--border); border-radius:6px; font-size:.72rem; font-weight:600; color:var(--faint); background:var(--surface); font-variant-numeric:tabular-nums;}
+  .tc-day-box.elapsed{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-dark);}
+  .tc-day-box.current{background:var(--accent-dark); border-color:var(--accent-dark); color:#fff; font-weight:800; box-shadow:0 0 0 3px var(--accent-soft);}
+  @media (max-width:640px){
+    .tc-dates{grid-template-columns:repeat(2, auto); gap:8px 20px;}
+    .tc-day-box{width:24px; height:24px; font-size:.68rem;}
+    .tc-week{gap:3px; padding:4px;}
+  }
+
+  /* Forecast — compacto */
+  .fc-section{margin-top:20px;}
+  .fc-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:12px;}
+  .fc-tile{background:var(--surface-2); border:1px solid var(--border); border-radius:9px;
+    padding:9px 12px; display:flex; flex-direction:column; gap:3px; transition:.15s; min-width:0;}
+  .fc-tile:hover{border-color:var(--accent);}
+  .fc-label{font-size:.62rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--muted); display:flex; align-items:center; gap:5px; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis;}
+  .fc-value{font-size:1.1rem; font-weight:700; letter-spacing:-.01em; color:var(--text);
+    font-variant-numeric:tabular-nums; line-height:1.15;}
+  .fc-value.is-empty{color:var(--faint); font-weight:400;}
+  .fc-cur{font-size:.72rem; font-weight:500; color:var(--muted); margin-right:1px;}
+  @media (max-width:900px){ .fc-grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:520px){ .fc-grid{grid-template-columns:repeat(2,1fr);} }
+  .fc-input-shell{display:flex; align-items:center; background:var(--surface); border:1px solid var(--border);
+    border-radius:6px; transition:.15s; min-width:0;}
+  .fc-input-shell:focus-within{border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft);}
+  .fc-input-shell .fc-cur{padding:0 0 0 7px;}
+  .fc-input-shell input{flex:1; min-width:0; width:100%; appearance:none; background:none; border:none;
+    color:var(--text); font-family:inherit; font-size:.95rem; font-weight:700; padding:5px 8px; outline:none;
+    font-variant-numeric:tabular-nums; text-align:left;}
+  .fc-input-shell input::placeholder{color:var(--faint); font-weight:400;}
+  .fc-actions{display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;}
+  .fc-actions .btn{padding:7px 16px; font-size:.85rem;}
+  .fc-actions .save-note{margin-left:auto; font-size:.78rem;}
+  @media (max-width:520px){
+    .fc-actions .btn{width:100%;}
+    .fc-actions .save-note{margin-left:0; width:100%;}
+  }
+
+  /* Status to date */
+  .status-section{margin-top:20px;}
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:14px;}
+  .stat-box{background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--accent);
+    border-radius:12px; padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; transition:.15s;}
+  .stat-box:hover{box-shadow:var(--shadow); transform:translateY(-1px);}
+  .stat-box .s-icon{width:34px; height:34px; border-radius:8px; background:var(--accent-soft);
+    display:grid; place-items:center; color:var(--accent-dark); margin-bottom:2px;}
+  .stat-box .s-icon svg{width:17px; height:17px;}
+  .stat-box .s-label{font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--muted);}
+  .stat-box .s-value{font-size:1.65rem; font-weight:800; letter-spacing:-.02em; color:var(--text);
+    font-variant-numeric:tabular-nums; line-height:1.1;}
+  .stat-box .s-value.is-empty{color:var(--faint); font-weight:400;}
+  .s-cur{font-size:.9rem; font-weight:600; color:var(--muted); margin-right:1px;}
+  .stat-box .s-sub{font-size:.73rem; color:var(--faint);}
+  .stat-box .s-chip{align-self:flex-start; display:inline-flex; align-items:center; gap:4px;
+    font-size:.7rem; font-weight:700; padding:2px 9px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent-dark); font-variant-numeric:tabular-nums; margin-top:2px;}
+  .stat-box .s-chip.is-empty{background:var(--surface-2); border:1px solid var(--border);
+    color:var(--faint); font-weight:500;}
+  .stat-box.warn{border-top-color:#B7791F;}
+  .stat-box.warn .s-icon{background:var(--warn-soft); color:#B7791F;}
+
+  /* Proyección semanal */
+  .week-proj{margin-top:18px;}
+  .wp-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:720px){ .wp-grid{grid-template-columns:1fr;} }
+  .wp-card{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:12px 14px;}
+  .wp-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+  .wp-title{font-size:.82rem; font-weight:700; color:var(--text);}
+  .wp-tag{font-size:.68rem; font-weight:600; color:var(--muted); background:var(--surface-2); border:1px solid var(--border); padding:2px 8px; border-radius:999px; white-space:nowrap;}
+  .wp-scroll{overflow-x:auto;}
+  .wp-tbl{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;}
+  .wp-tbl thead th{font-size:.62rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--muted); padding:6px 8px; text-align:right; border-bottom:1px solid var(--border);}
+  .wp-tbl thead th:first-child{text-align:left;}
+  .wp-tbl tbody th{padding:8px; text-align:left; font-size:.82rem; font-weight:600; color:var(--text); border-bottom:1px solid var(--border);}
+  .wp-tbl tbody td{padding:8px; text-align:right; font-size:.82rem; color:var(--text); border-bottom:1px solid var(--border); white-space:nowrap;}
+  .wp-tbl tbody tr:last-child th, .wp-tbl tbody tr:last-child td{border-bottom:none;}
+  .wp-tbl tbody tr.wp-current th, .wp-tbl tbody tr.wp-current td{background:var(--warn-soft);}
+  .wp-tbl tbody tr.wp-past th{color:var(--accent-dark);}
+  .wp-tbl tbody tr.wp-total th, .wp-tbl tbody tr.wp-total td{background:var(--surface-2); font-weight:800; border-top:2px solid var(--border); font-size:.86rem;}
+  .wp-tbl tbody tr.wp-total td.wp-proj{color:var(--text);}
+  .wp-tbl tbody tr.wp-future td:not(.wp-proj){color:var(--faint);}
+  .wp-tbl td.wp-proj{color:var(--muted);}
+  .wp-tbl td.wp-var{font-weight:700;}
+  .wp-tbl td.wp-var.up{color:var(--accent-dark);}
+  .wp-tbl td.wp-var.down{color:var(--bad);}
+  .wp-tbl td.wp-var.na{color:var(--faint); font-weight:400;}
+
+  .progress-dual{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;}
+  @media (max-width:640px){ .progress-dual{grid-template-columns:1fr; gap:12px;} }
+  .progress-alt .progress-fill{background:linear-gradient(90deg,#B7791F,#8B5D1A);}
+  .progress-alt .progress-track{background:var(--warn-soft);}
+  .progress-alt .progress-pct{color:#8B5D1A;}
+  .progress-foot b{color:var(--text); font-weight:700;}
+  .progress-block{margin-top:0;}
+  .progress-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px;}
+  .progress-label{font-size:.85rem; font-weight:600; color:var(--text);}
+  .progress-pct{font-size:1.15rem; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums;}
+  .progress-pct.is-empty{color:var(--faint); font-weight:400;}
+  .progress-track{height:12px; background:var(--accent-soft); border:1px solid var(--border);
+    border-radius:999px; overflow:hidden;}
+  .progress-fill{height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+    border-radius:999px; transition:width .5s ease;}
+  .progress-foot{display:flex; justify-content:space-between; gap:10px; margin-top:8px;
+    font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  @media (max-width:960px){ .stat-grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:640px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:400px){ .stat-grid{grid-template-columns:1fr;} }
+
+  /* Comparativo de métricas — tablero estilo dashboard */
+  .cmp-section{margin-top:20px;}
+  .cmp-header{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px;}
+  .cmp-titles{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .cmp-titles h2{font-size:1.02rem; font-weight:600; margin:0; letter-spacing:-.005em;}
+  .cmp-title-ciclo{color:var(--muted); font-weight:500;}
+  .cmp-titles .hint{color:var(--faint); font-size:.82rem;}
+  .cmp-day-pill{background:var(--accent-soft); color:var(--accent-dark); font-size:.78rem;
+    font-weight:600; padding:5px 12px; border-radius:999px; white-space:nowrap; align-self:flex-start;}
+
+  .cmp-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:12px;}
+  .cmp-tbl{width:100%; border-collapse:collapse; min-width:820px; font-variant-numeric:tabular-nums;
+    background:var(--surface);}
+
+  /* Band header colors */
+  .cmp-b-actual{--cbg:#14201A; --csoft:rgba(20,32,26,.05);}
+  .cmp-b-ano   {--cbg:#1F5F5B; --csoft:rgba(31,95,91,.06);}
+  .cmp-b-ciclo {--cbg:#0B7A3C; --csoft:rgba(11,122,60,.07);}
+  .cmp-b-meta  {--cbg:#B7791F; --csoft:rgba(183,121,31,.07);}
+
+  .cmp-band{background:var(--cbg); color:#fff; text-align:center; padding:9px 14px;
+    border-left:1px solid rgba(255,255,255,.14);}
+  .cmp-band:first-of-type{border-left:none;}
+  .cmp-band-title{font-size:.72rem; font-weight:700; letter-spacing:.05em;}
+  .cmp-band-sub{font-size:.6rem; font-weight:500; letter-spacing:.03em; opacity:.85; margin-top:2px;}
+  .cmp-b-empty{background:var(--surface-2); border-bottom:1px solid var(--border); width:130px;}
+
+  .cmp-subhead th{font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); padding:7px 14px; text-align:right; border-bottom:1.5px solid var(--border);
+    background:var(--surface-2);}
+  .cmp-sub{border-left:1px solid var(--border);}
+
+  .cmp-tbl tbody th[scope="row"]{padding:12px 16px; text-align:left; font-size:.9rem; font-weight:600;
+    color:var(--text); background:var(--surface); border-bottom:1px solid var(--border);}
+  .cmp-tbl tbody td{padding:12px 14px; text-align:right; font-size:.9rem; color:var(--muted);
+    border-bottom:1px solid var(--border); border-left:1px solid var(--border); white-space:nowrap;}
+  .cmp-tbl tbody td.c-actual{font-size:1.02rem; font-weight:700; color:var(--text);
+    background:var(--surface-2);}
+  .cmp-tbl tbody td.c-ano{background:var(--csoft, transparent);}
+  .cmp-tbl tbody td.c-ciclo{background:var(--csoft, transparent);}
+  .cmp-tbl tbody td.c-meta{background:var(--csoft, transparent); color:var(--text); font-weight:600;}
+  .cmp-tbl tbody tr td.c-ano{--csoft:rgba(31,95,91,.06);}
+  .cmp-tbl tbody tr td.c-ciclo{--csoft:rgba(11,122,60,.06);}
+  .cmp-tbl tbody tr td.c-meta{--csoft:rgba(183,121,31,.07);}
+  .cmp-tbl tbody td.c-na{color:var(--faint); font-size:.72rem; font-style:italic; text-align:center;}
+  .cmp-tbl tbody tr:last-child th, .cmp-tbl tbody tr:last-child td{border-bottom:none;}
+  .cmp-tbl tbody tr:hover td:not(.c-actual):not(.c-meta):not(.c-na){background:var(--surface-2);}
+
+  .delta-chip{display:inline-flex; align-items:center; gap:3px; font-size:.72rem; font-weight:700;
+    padding:2px 8px; border-radius:999px; font-variant-numeric:tabular-nums;}
+  .delta-chip.is-empty{background:var(--surface); border:1px solid var(--border); color:var(--faint); font-weight:500;}
+  .delta-chip.up{background:var(--accent-soft); color:var(--accent-dark);}
+  .delta-chip.down{background:var(--bad-soft); color:var(--bad);}
+
+  .cmp-input{width:96px; max-width:100%; text-align:right; appearance:none; background:var(--surface);
+    border:1px solid var(--border); border-radius:8px; color:#8B5D1A; font-family:inherit;
+    font-size:.9rem; font-weight:700; padding:6px 9px; outline:none; font-variant-numeric:tabular-nums;}
+  .cmp-input:focus{border-color:#B7791F; box-shadow:0 0 0 3px rgba(183,121,31,.15);}
+  .cmp-input::placeholder{color:var(--faint); font-weight:400;}
+  .cmp-foot{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:14px;}
+  .cmp-foot-note{font-size:.8rem; color:var(--muted); flex:1 1 240px;}
+  .cmp-foot .btn{margin-left:auto; padding:9px 20px;}
+  @media (max-width:560px){ .cmp-foot .btn{margin-left:0; width:100%;} }
+
+  /* Daily sales chart */
+  .chart-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px 24px; flex-wrap:wrap;}
+  .ch-titles{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .chart-summary{display:flex; flex-direction:column; align-items:flex-end; gap:7px; text-align:right;}
+  .cs-acc{display:flex; flex-direction:column; align-items:flex-end; gap:1px;}
+  .cs-label{font-size:.66rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--muted);}
+  .cs-value{font-size:1.5rem; font-weight:300; letter-spacing:-.02em; color:var(--text);
+    font-variant-numeric:tabular-nums; line-height:1.1;}
+  .cs-value.is-empty{color:var(--faint);}
+  .cs-cmp{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+  .cs-chip{display:inline-flex; align-items:center; gap:6px; font-size:.8rem; background:var(--surface-2);
+    border:1px solid var(--border); border-radius:999px; padding:3px 11px; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .cs-chip b{color:var(--accent-dark); font-weight:700;}
+  .cs-chip-label{font-size:.64rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--faint);}
+  @media (max-width:560px){
+    .chart-summary{align-items:flex-start; text-align:left;}
+    .cs-acc{align-items:flex-start;}
+    .cs-cmp{justify-content:flex-start;}
+  }
+  .ch-toolbar{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:14px; margin-bottom:6px;}
+  .ch-toolbar .chart-legend{margin:0;}
+  .chart-legend{display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:14px; margin-bottom:6px;}
+  .lg-item{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; color:var(--muted);}
+  .lg-swatch{width:14px; height:14px; flex:none;}
+  .lg-swatch.lg-bar{background:var(--accent); border-radius:3px;}
+  .lg-swatch.lg-proj{height:0; border-top:2px dashed var(--muted); border-radius:0;}
+  .lg-swatch.lg-prev{background:var(--muted); border-radius:3px;}
+  .ch-prevbar{fill:var(--muted);}
+  .ch-prevbar:hover, .ch-bar.hl, .ch-prevbar.hl{opacity:.85;}
+  .lg-demo{margin-left:auto; font-size:.7rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--faint); background:var(--surface-2); border:1px solid var(--border); padding:3px 9px; border-radius:999px;}
+  .chart-wrap{position:relative; margin-top:6px;}
+  #salesChart{width:100%; height:auto; display:block; overflow:visible;}
+  .ch-grid{stroke:var(--border); stroke-width:1;}
+  .ch-axis-label{fill:var(--muted); font-size:12px; font-family:var(--font);}
+  .ch-xlabel{font-size:10.5px;}
+  .ch-bar{fill:var(--accent);}
+  .ch-bar:hover{fill:var(--accent-dark);}
+  .ch-proj{fill:none; stroke:var(--muted); stroke-width:2; stroke-dasharray:5 4; stroke-linejoin:round; stroke-linecap:round;}
+  .ch-hito{fill:var(--warn);}
+  .chart-tip{position:absolute; pointer-events:none; z-index:5; background:var(--text); color:var(--bg);
+    padding:8px 11px; border-radius:8px; font-size:.78rem; line-height:1.4; box-shadow:var(--shadow);
+    transform:translate(-50%,-110%); white-space:nowrap;}
+  .chart-tip b{font-weight:600;}
+  .chart-tip .tip-row{display:flex; align-items:center; gap:6px; font-variant-numeric:tabular-nums;}
+  .chart-tip .tip-dot{width:8px; height:8px; border-radius:50%; flex:none;}
+
+  /* Hitos */
+  .hito-form{display:grid; grid-template-columns:minmax(120px,.7fr) minmax(150px,.9fr) minmax(200px,1.6fr) auto;
+    gap:14px; align-items:end; margin-top:16px;}
+  .hito-detail{min-width:0;}
+  .hito-add{white-space:nowrap; padding:10px 20px;}
+  .hito-list{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .hito-empty{color:var(--faint); font-size:.85rem; padding:14px 0; text-align:center;}
+  .hito-item{display:flex; align-items:center; gap:12px; background:var(--surface-2);
+    border:1px solid var(--border); border-radius:10px; padding:10px 14px;}
+  .hito-day{flex:none; font-size:.78rem; font-weight:700; color:var(--accent-dark);
+    background:var(--accent-soft); padding:4px 9px; border-radius:7px; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .hito-type{flex:none; font-size:.72rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+    padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .hito-type.t-agotado{background:#DC2626; color:#fff;}
+  .hito-type.t-disponibilizado{background:#F5C518; color:#3B2E00;}
+  .hito-type.t-accion{background:#0EA5E9; color:#fff;}
+  .hito-type.t-otros{background:var(--surface); border:1px solid var(--border); color:var(--muted);}
+  .ch-hito.h-agotado{fill:#DC2626;}
+  .ch-hito.h-disponibilizado{fill:#F5C518;}
+  .ch-hito.h-accion{fill:#0EA5E9;}
+  .ch-hito.h-otros{fill:var(--muted);}
+  .hito-text{flex:1 1 auto; min-width:0; font-size:.88rem; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .hito-del{flex:none; appearance:none; background:none; border:none; cursor:pointer; color:var(--faint);
+    width:28px; height:28px; border-radius:7px; display:grid; place-items:center; font-size:1.1rem; transition:.15s;}
+  .hito-del:hover{color:var(--bad); background:var(--bad-soft);}
+  @media (max-width:640px){
+    .hito-form{grid-template-columns:1fr 1fr; }
+    .hito-detail{grid-column:1 / -1;}
+    .hito-add{grid-column:1 / -1; width:100%;}
+  }
+
+  /* Cycle distribution insights */
+  .ins-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px;}
+  .ins-box{background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:14px 16px; display:flex; flex-direction:column; gap:6px;}
+  .ins-box .s-label{font-size:.72rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--muted); display:flex; align-items:center; gap:6px;}
+  .ins-box .s-value{font-size:1.5rem; font-weight:300; letter-spacing:-.02em; color:var(--text);
+    font-variant-numeric:tabular-nums; line-height:1.1;}
+  .ins-box .s-sub{font-size:.75rem; color:var(--faint);}
+
+  .weekdist{margin-top:18px;}
+  .weekdist-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px;}
+  .weekdist-cap{font-size:.78rem; color:var(--muted);}
+  .weekdist-bar{display:flex; height:34px; border-radius:9px; overflow:hidden; background:var(--surface-2);
+    border:1px solid var(--border);}
+  .wk-seg{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.82rem;
+    font-weight:700; font-variant-numeric:tabular-nums; box-shadow:inset -2px 0 0 var(--surface); min-width:0;
+    text-shadow:0 1px 1px rgba(0,0,0,.25); transition:width .5s ease;}
+  .wk-seg:last-child{box-shadow:none;}
+  .weekdist-legend{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:10px;}
+  .wk-lg{display:inline-flex; align-items:center; gap:7px; font-size:.82rem; color:var(--muted);}
+  .wk-lg .wk-dot{width:11px; height:11px; border-radius:3px; flex:none;}
+  .wk-lg b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums;}
+  .wk-lg span.wk-amt{color:var(--faint);}
+  @media (max-width:560px){ .ins-grid{grid-template-columns:1fr;} }
+
+  /* Empty state (Análisis) */
+  .empty{display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px;
+    padding:56px 24px; color:var(--muted);}
+  .empty .ring{width:56px; height:56px; border-radius:50%; background:var(--accent-soft);
+    display:grid; place-items:center; color:var(--accent);}
+  .empty h3{margin:0; font-size:1.05rem; font-weight:600; color:var(--text);}
+  .empty p{margin:0; max-width:42ch; font-size:.9rem;}
+
+  /* Toast */
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--text); color:var(--bg); padding:11px 20px; border-radius:10px; font-size:.9rem;
+    font-weight:500; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s;
+    display:flex; align-items:center; gap:8px; z-index:50;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast svg{flex:none;}
+
+  @media (max-width:400px){
+    .tab{font-size:.88rem; padding:10px 12px;}
+    .tabs{gap:2px;}
+  }
+
+  /* Tipo de Ciclo */
+  .tc2-controls{display:flex; flex-wrap:wrap; gap:14px 20px; margin-top:14px; margin-bottom:16px;}
+  .tc2-ctrl{display:flex; flex-direction:column; gap:5px;}
+  .tc2-key{font-size:.68rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted);}
+  .tc2-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:12px;}
+  .tc2-tbl{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; background:var(--surface);}
+  .tc2-tbl thead th{font-size:.66rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--muted); padding:9px 10px; text-align:right; background:var(--surface-2);
+    border-bottom:1.5px solid var(--border); white-space:nowrap;}
+  .tc2-tbl thead th:first-child, .tc2-tbl thead th:nth-child(2){text-align:left;}
+  .tc2-tbl tbody th{padding:10px 12px; text-align:left; font-size:.88rem; font-weight:600; color:var(--text);
+    background:var(--surface); border-bottom:1px solid var(--border); white-space:nowrap;}
+  .tc2-tbl tbody td{padding:10px 10px; text-align:right; font-size:.85rem; color:var(--muted);
+    border-bottom:1px solid var(--border); border-left:1px solid var(--border); white-space:nowrap;}
+  .tc2-tbl tbody td.tc2-dur{color:var(--faint); font-size:.75rem;}
+  .tc2-tbl tbody td.tc2-empty{color:var(--faint); opacity:.5;}
+  .tc2-tbl tbody td.tc2-prom{background:var(--accent-soft); color:var(--accent-dark); font-weight:700;}
+  .tc2-tbl tbody td.tc2-total{background:var(--surface-2); color:var(--text); font-weight:700;}
+  .tc2-tbl tbody tr:last-child th, .tc2-tbl tbody tr:last-child td{border-bottom:none;}
+  .tc2-tbl tbody tr:hover td:not(.tc2-prom):not(.tc2-total){background:var(--surface-2);}
+  .tc2-note{margin-top:12px; font-size:.78rem; color:var(--faint); line-height:1.5;}
+  @media (max-width:560px){
+    .tc2-tbl thead th, .tc2-tbl tbody td{padding:7px 8px; font-size:.78rem;}
+    .tc2-tbl tbody th{padding:8px 10px; font-size:.82rem;}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <img class="brand-logo" id="brandLogo" alt="Biogreen Chile" />
+    <div class="titles">
+      <h1>Gestión Comercial <b>Biogreen</b></h1>
+      <span class="subtitle">Seguimiento diario de ventas y metas del ciclo</span>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Vistas del dashboard">
+    <button class="tab" role="tab" id="tab-resumen" aria-controls="panel-resumen" aria-selected="true">Resumen</button>
+    <button class="tab" role="tab" id="tab-analisis" aria-controls="panel-analisis" aria-selected="false">Análisis Diario</button>
+    <button class="tab" role="tab" id="tab-tipociclo" aria-controls="panel-tipociclo" aria-selected="false">Tipo de Ciclo</button>
+  </div>
+
+  <!-- RESUMEN -->
+  <section class="panel" id="panel-resumen" role="tabpanel" aria-labelledby="tab-resumen">
+    <form id="configForm" class="card" autocomplete="off">
+      <div class="eyebrow">Configuración del ciclo</div>
+
+      <div class="field-grid cycle-grid">
+        <div class="field">
+          <label for="cicloActual">Ciclo en curso</label>
+          <div class="input-shell">
+            <select id="cicloActual" name="cicloActual"></select>
+            <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </div>
+        </div>
+        <div class="field">
+          <label id="duracionLbl">Duración del ciclo</label>
+          <div class="seg" role="radiogroup" aria-labelledby="duracionLbl">
+            <button type="button" class="seg-opt" data-dur="3" aria-pressed="false">3 semanas</button>
+            <button type="button" class="seg-opt" data-dur="4" aria-pressed="false">4 semanas</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cicloInicio">Fecha de comienzo</label>
+          <div class="input-shell"><input type="date" id="cicloInicio" name="cicloInicio"></div>
+        </div>
+        <div class="field">
+          <label for="cicloTermino">Fecha de término <span class="tag" id="autoTag" hidden>auto</span></label>
+          <div class="input-shell"><input type="date" id="cicloTermino" name="cicloTermino"></div>
+        </div>
+      </div>
+
+      <div class="card-head">
+        <h2>Metas del ciclo</h2>
+        <span class="hint">Objetivos que se contrastan con el avance diario</span>
+      </div>
+      <div class="field-grid meta-grid" style="margin-top:10px">
+        <div class="field">
+          <div class="lbl-row"><label for="metaPuntos">Meta Puntos</label></div>
+          <div class="input-shell"><input type="text" inputmode="numeric" id="metaPuntos" name="metaPuntos" placeholder="0"></div>
+        </div>
+        <div class="field">
+          <div class="lbl-row"><label for="metaFacturacion">Meta Facturación</label><span class="tag">CLP</span></div>
+          <div class="input-shell"><span class="prefix">$</span><input type="text" inputmode="numeric" id="metaFacturacion" name="metaFacturacion" placeholder="0"></div>
+        </div>
+        <div class="field">
+          <div class="lbl-row"><label for="metaDir">Meta DIR</label><span class="tag">Directores</span></div>
+          <div class="input-shell"><input type="text" inputmode="numeric" id="metaDir" name="metaDir" placeholder="0"></div>
+        </div>
+        <div class="field">
+          <div class="lbl-row"><label for="metaActivos">Meta Activos</label></div>
+          <div class="input-shell"><input type="text" inputmode="numeric" id="metaActivos" name="metaActivos" placeholder="0"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-ghost" id="clearBtn">Limpiar</button>
+        <span class="save-note" id="saveNote"></span>
+      </div>
+    </form>
+
+    <div class="saved-banner" id="savedBanner" hidden>
+      <div class="sb-top">
+        <h2 class="sb-title">Gestión Comercial Biogreen</h2>
+        <span class="sb-badge"><span class="sb-check">✓</span> <span id="sbBadgeText">Guardado</span></span>
+        <button type="button" class="sb-edit" id="editBtn">Editar</button>
+      </div>
+      <div class="sb-sub" id="sbSub"></div>
+      <div class="sb-tiles" id="sbTiles"></div>
+    </div>
+
+    <div class="card projmet-section">
+      <div class="card-head">
+        <h2>Métricas para proyectar</h2>
+        <span class="hint">Configuración base del catálogo del ciclo</span>
+      </div>
+      <div id="pmEdit">
+      <div class="field-grid pm-topgrid">
+        <div class="field">
+          <label>Apertura de catálogo</label>
+          <div class="pm-cp-pair">
+            <div class="input-shell"><select id="pmAperturaC" aria-label="Ciclo apertura"></select><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+            <div class="input-shell"><select id="pmAperturaP" aria-label="Período apertura"></select><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cierre de catálogo</label>
+          <div class="pm-cp-pair">
+            <div class="input-shell"><select id="pmCierreC" aria-label="Ciclo cierre"></select><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+            <div class="input-shell"><select id="pmCierreP" aria-label="Período cierre"></select><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+          </div>
+        </div>
+        <div class="field pm-total-field" id="pmTotalField" hidden>
+          <label>Duración total del catálogo</label>
+          <div class="pm-total">
+            <b id="pmCatCount">—</b>&nbsp;ciclos <span class="sep" style="opacity:.5">·</span>
+            <b id="pmTotalSem">—</b>&nbsp;semanas <span class="sep" style="opacity:.5">·</span>
+            <span id="pmTotalDias">—</span> días
+          </div>
+        </div>
+      </div>
+      <div class="pm-warn" id="pmWarn" hidden></div>
+      <div class="pm-rows" id="pmRows" hidden></div>
+      <div class="pm-actions" id="pmActions" hidden>
+        <button type="button" class="btn btn-primary" id="savePmBtn">Guardar métricas</button>
+        <span class="save-note" id="pmSaveNote"></span>
+      </div>
+      </div><!-- /pmEdit -->
+
+      <div id="pmSaved" hidden>
+        <div class="pm-saved-row">
+          <div class="pm-saved-pill">
+            <span class="pm-saved-key">Apertura</span>
+            <span class="pm-saved-val" id="pmSvApertura">—</span>
+          </div>
+          <span class="pm-saved-arrow">→</span>
+          <div class="pm-saved-pill">
+            <span class="pm-saved-key">Cierre</span>
+            <span class="pm-saved-val" id="pmSvCierre">—</span>
+          </div>
+          <div class="pm-saved-total" id="pmSvTotal">—</div>
+          <div class="pm-saved-current" id="pmSvCurrent" hidden>
+            <span class="pmc-key">Ahora</span>
+            <span class="pmc-name" id="pmSvCurName">—</span>
+            <span class="pmc-tag" id="pmSvCurTag">—</span>
+          </div>
+          <button type="button" class="btn btn-ghost pm-edit-btn" id="editPmBtn">Editar métricas</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tc-section" id="tcSection">
+      <div class="tc-empty" id="tcEmpty">
+        Configura el ciclo arriba (fecha de inicio y duración) para ver el transcurso.
+      </div>
+      <div class="tc-body" id="tcBody" hidden>
+        <div class="tc-head">
+          <div class="tc-day-block">
+            <span class="tc-eyebrow">Transcurso del ciclo</span>
+            <div class="tc-day-big">
+              Día <b id="tcDayNum">—</b> <span class="tc-of">de <span id="tcDayTotal">—</span></span>
+              <span class="tc-remaining" id="tcRemaining"></span>
+            </div>
+          </div>
+          <div class="tc-dates">
+            <div><span class="tc-key">Inicio</span><span class="tc-val" id="tcIni">—</span></div>
+            <div><span class="tc-key">Hoy</span><span class="tc-val" id="tcToday">—</span></div>
+            <div><span class="tc-key">Cierre</span><span class="tc-val" id="tcFin">—</span></div>
+            <div><span class="tc-key">Duración</span><span class="tc-val" id="tcDur">—</span></div>
+          </div>
+        </div>
+        <div class="tc-bar-block">
+          <div class="tc-bar"><div class="tc-bar-fill" id="tcBarFill" style="width:0%"></div></div>
+          <div class="tc-bar-labels">
+            <span id="tcBarStart">—</span>
+            <span class="tc-pct" id="tcPct">—</span>
+            <span id="tcBarEnd">—</span>
+          </div>
+        </div>
+        <div class="tc-weeks" id="tcWeeks"></div>
+      </div>
+    </div>
+
+    <div class="card fc-section">
+      <div class="card-head">
+        <h2>Forecast</h2>
+        <span class="hint">Estimación editable del ciclo</span>
+      </div>
+      <div class="fc-grid" id="fcGrid">
+        <div class="fc-tile" data-fc-key="facturacion" data-fc-money="1">
+          <span class="fc-label">💰 Facturación</span>
+        </div>
+        <div class="fc-tile" data-fc-key="puntos">
+          <span class="fc-label">🎯 Puntos</span>
+        </div>
+        <div class="fc-tile" data-fc-key="activos">
+          <span class="fc-label">👥 Activos</span>
+        </div>
+        <div class="fc-tile" data-fc-key="dir">
+          <span class="fc-label">👑 DIR</span>
+        </div>
+        <div class="fc-tile" data-fc-key="lid">
+          <span class="fc-label">🎖 LID</span>
+        </div>
+        <div class="fc-tile" data-fc-key="cor">
+          <span class="fc-label">🌟 COR</span>
+        </div>
+      </div>
+      <div class="fc-actions">
+        <button type="button" class="btn btn-primary" id="saveFcBtn">Guardar métricas</button>
+        <span class="save-note" id="fcSaveNote"></span>
+      </div>
+    </div>
+
+    <div class="card status-section">
+      <div class="card-head">
+        <h2>Avance a la fecha</h2>
+        <span class="hint">Resultados reales del ciclo en curso</span>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <span class="s-label">Venta a la fecha</span>
+          <span class="s-value is-empty" id="avVenta"><span class="s-cur">$</span>—</span>
+          <span class="s-sub">Facturación acumulada</span>
+          <span class="s-chip is-empty" id="avVentaPct">—% cumplimiento</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <span class="s-label">Puntos a la fecha</span>
+          <span class="s-value is-empty" id="avPuntos">—</span>
+          <span class="s-sub">Puntos acumulados</span>
+          <span class="s-chip is-empty" id="avPuntosPct">—% cumplimiento</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="s-label">Activos a la fecha</span>
+          <span class="s-value is-empty" id="avActivos">—</span>
+          <span class="s-sub">Distribuidores activos</span>
+          <span class="s-chip is-empty" id="avActivosPct">—% avance</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <span class="s-label">Promedio diario</span>
+          <span class="s-value is-empty" id="avPromDia"><span class="s-cur">$</span>—</span>
+          <span class="s-sub">Facturación por día</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <span class="s-label">Fact. prom. por activo</span>
+          <span class="s-value is-empty" id="avFactPorAct"><span class="s-cur">$</span>—</span>
+          <span class="s-sub">Venta ÷ activos</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <span class="s-label">Puntos prom. por activo</span>
+          <span class="s-value is-empty" id="avPuntosPorAct">—</span>
+          <span class="s-sub">Puntos ÷ activos</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+          <span class="s-label">Incorporaciones</span>
+          <span class="s-value is-empty" id="avIncorp">—</span>
+          <span class="s-sub" id="avIncorpSub">Nuevas · activas</span>
+        </div>
+        <div class="stat-box">
+          <div class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <span class="s-label">Pedidos</span>
+          <span class="s-value is-empty" id="avPedidos">—</span>
+          <span class="s-sub">Cantidad de pedidos</span>
+        </div>
+      </div>
+      <div class="week-proj" id="weekProj">
+        <div class="wp-grid">
+          <div class="wp-card">
+            <div class="wp-head">
+              <span class="wp-title">🎯 Proyección semanal · Puntos</span>
+              <span class="wp-tag" id="wpPuntosTag">—</span>
+            </div>
+            <div class="wp-scroll">
+              <table class="wp-tbl" id="wpPuntosTbl"></table>
+            </div>
+          </div>
+          <div class="wp-card">
+            <div class="wp-head">
+              <span class="wp-title">💰 Proyección semanal · Facturación</span>
+              <span class="wp-tag" id="wpFactTag">—</span>
+            </div>
+            <div class="wp-scroll">
+              <table class="wp-tbl" id="wpFactTbl"></table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-dual">
+        <div class="progress-block">
+          <div class="progress-head">
+            <span class="progress-label">Avance de facturación vs Meta</span>
+            <span class="progress-pct is-empty" id="apMetaPct">—</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="apMetaFill" style="width:0%"></div></div>
+          <div class="progress-foot">
+            <span><b id="apMetaReal">$—</b> a la fecha</span>
+            <span>Meta <b id="apMetaTot">$—</b></span>
+          </div>
+        </div>
+        <div class="progress-block progress-alt">
+          <div class="progress-head">
+            <span class="progress-label">Avance de facturación vs Forecast</span>
+            <span class="progress-pct is-empty" id="apFcPct">—</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="apFcFill" style="width:0%"></div></div>
+          <div class="progress-foot">
+            <span><b id="apFcReal">$—</b> a la fecha</span>
+            <span>Forecast <b id="apFcTot">$—</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card cmp-section">
+      <div class="cmp-header">
+        <div class="cmp-titles">
+          <h2>Comparativo de métricas <span class="cmp-title-ciclo" id="cmpTitleCiclo"></span></h2>
+          <span class="hint">Acumulado del ciclo actual vs. cada referencia</span>
+        </div>
+        <span class="cmp-day-pill" id="cmpDayPill" hidden>—</span>
+      </div>
+      <div class="cmp-scroll">
+        <table class="cmp-tbl">
+          <thead>
+            <tr class="cmp-band-row">
+              <th class="cmp-b-empty" rowspan="2"></th>
+              <th class="cmp-band cmp-b-actual" rowspan="2">
+                <div class="cmp-band-title">CICLO ACTUAL</div>
+                <div class="cmp-band-sub">Acumulado</div>
+              </th>
+              <th class="cmp-band cmp-b-ano" colspan="2">
+                <div class="cmp-band-title">VS AÑO ANTERIOR</div>
+                <div class="cmp-band-sub">Mismo ciclo, año pasado</div>
+              </th>
+              <th class="cmp-band cmp-b-ciclo" colspan="2">
+                <div class="cmp-band-title">VS FORECAST</div>
+                <div class="cmp-band-sub">Estimación del ciclo</div>
+              </th>
+              <th class="cmp-band cmp-b-meta" colspan="2">
+                <div class="cmp-band-title">VS META</div>
+                <div class="cmp-band-sub">Objetivo del ciclo</div>
+              </th>
+            </tr>
+            <tr class="cmp-subhead">
+              <th class="cmp-sub cmp-s-ano">Abs</th>
+              <th class="cmp-sub cmp-s-ano">Var %</th>
+              <th class="cmp-sub cmp-s-ciclo">Abs</th>
+              <th class="cmp-sub cmp-s-ciclo">Var %</th>
+              <th class="cmp-sub cmp-s-meta">Abs</th>
+              <th class="cmp-sub cmp-s-meta">Cumpl</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Puntos</th>
+              <td class="c-actual" id="acActPuntos">—</td>
+              <td class="c-ano">—</td>
+              <td class="c-ano c-var"><span class="delta-chip is-empty">—</span></td>
+              <td class="c-ciclo" id="fcAbsPuntos">—</td>
+              <td class="c-ciclo c-var"><span class="delta-chip is-empty" id="fcVarPuntos">—</span></td>
+              <td class="c-meta" id="cmpMetaPuntos">—</td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty" id="mtVarPuntos">—</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Facturación</th>
+              <td class="c-actual" id="acActFacturacion">—</td>
+              <td class="c-ano">—</td>
+              <td class="c-ano c-var"><span class="delta-chip is-empty">—</span></td>
+              <td class="c-ciclo" id="fcAbsFacturacion">—</td>
+              <td class="c-ciclo c-var"><span class="delta-chip is-empty" id="fcVarFacturacion">—</span></td>
+              <td class="c-meta" id="cmpMetaFacturacion">—</td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty" id="mtVarFacturacion">—</span></td>
+            </tr>
+            <tr>
+              <th scope="row">DIR</th>
+              <td class="c-actual" id="acActDir">—</td>
+              <td class="c-ano c-na" colspan="2">Solo vs. meta</td>
+              <td class="c-ciclo" id="fcAbsDir">—</td>
+              <td class="c-ciclo c-var"><span class="delta-chip is-empty" id="fcVarDir">—</span></td>
+              <td class="c-meta" id="cmpMetaDir">—</td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty" id="mtVarDir">—</span></td>
+            </tr>
+            <tr>
+              <th scope="row">COR</th>
+              <td class="c-actual" id="acActCor">—</td>
+              <td class="c-ano c-na" colspan="2">Solo vs. meta</td>
+              <td class="c-ciclo" id="fcAbsCor">—</td>
+              <td class="c-ciclo c-var"><span class="delta-chip is-empty" id="fcVarCor">—</span></td>
+              <td class="c-meta" id="cellCor"></td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty" id="mtVarCor">—</span></td>
+            </tr>
+            <tr>
+              <th scope="row">LID</th>
+              <td class="c-actual" id="acActLid">—</td>
+              <td class="c-ano c-na" colspan="2">Solo vs. meta</td>
+              <td class="c-ciclo" id="fcAbsLid">—</td>
+              <td class="c-ciclo c-var"><span class="delta-chip is-empty" id="fcVarLid">—</span></td>
+              <td class="c-meta" id="cellLid"></td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty" id="mtVarLid">—</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Sucursales</th>
+              <td class="c-actual">—</td>
+              <td class="c-ano c-na" colspan="2">Solo vs. meta</td>
+              <td class="c-ciclo c-na" colspan="2">Sin dato en Forecast</td>
+              <td class="c-meta" id="cellSuc"></td>
+              <td class="c-meta c-var"><span class="delta-chip is-empty">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cmp-foot">
+        <span class="cmp-foot-note" id="cmpFootNote">Puntos, Facturación y DIR se toman de la configuración. Completa <b>COR</b>, <b>LID</b> y <b>Sucursales</b> y guarda.</span>
+        <button type="button" class="btn btn-primary" id="saveMetasBtn">Guardar metas</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANÁLISIS DIARIO -->
+  <section class="panel" id="panel-analisis" role="tabpanel" aria-labelledby="tab-analisis" hidden>
+    <div class="card">
+      <div class="card-head chart-head">
+        <div class="ch-titles">
+          <h2>Comportamiento diario</h2>
+          <span class="hint" id="chartSubtitle">Por día del ciclo vs. proyectado</span>
+        </div>
+        <div class="chart-summary" id="chartSummary">
+          <div class="cs-acc">
+            <span class="cs-label">Acumulado al ciclo</span>
+            <span class="cs-value is-empty" id="csAcum">—</span>
+          </div>
+          <div class="cs-cmp">
+            <span class="cs-chip"><span class="cs-chip-label">Meta</span> <b id="csMetaPct">—</b></span>
+            <span class="cs-chip"><span class="cs-chip-label">Proyectado</span> <b id="csProjPct">—</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="ch-toolbar">
+        <div class="seg" role="radiogroup" aria-label="Métrica del gráfico">
+          <button type="button" class="seg-opt" data-ch-metric="puntos" aria-pressed="true">Puntos</button>
+          <button type="button" class="seg-opt" data-ch-metric="facturacion" aria-pressed="false">Facturación</button>
+        </div>
+        <div class="chart-legend">
+          <span class="lg-item"><span class="lg-swatch lg-bar"></span> <span id="lgBar">Puntos por día</span></span>
+          <span class="lg-item"><span class="lg-swatch lg-proj"></span> <span id="lgProj">Proyectado</span></span>
+          <span class="lg-demo" id="chartDemoTag" hidden>Vista previa · datos de ejemplo</span>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chartWrap">
+        <svg id="salesChart" viewBox="0 0 800 340" role="img" aria-label="Ventas diarias del ciclo vs proyectado"></svg>
+        <div class="chart-tip" id="chartTip" hidden></div>
+      </div>
+    </div>
+
+    <div class="card hitos-section">
+      <div class="card-head">
+        <h2>Hitos del ciclo</h2>
+        <span class="hint">Marca eventos asociados a un día del gráfico</span>
+      </div>
+      <div class="hito-form">
+        <div class="field">
+          <label for="hitoDia">Día</label>
+          <div class="input-shell">
+            <select id="hitoDia"></select>
+            <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="hitoTipo">Tipo de hito</label>
+          <div class="input-shell">
+            <select id="hitoTipo">
+              <option value="Agotado">Agotado</option>
+              <option value="Disponibilizado">Disponibilizado</option>
+              <option value="Acción Especial">Acción Especial</option>
+              <option value="Otros">Otros</option>
+            </select>
+            <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </div>
+        </div>
+        <div class="field hito-detail">
+          <label for="hitoDetalle">Detalle</label>
+          <div class="input-shell"><input type="text" id="hitoDetalle" maxlength="120" placeholder="Describe brevemente el hito"></div>
+        </div>
+        <button type="button" class="btn btn-primary hito-add" id="addHitoBtn">Agregar hito</button>
+      </div>
+      <ul class="hito-list" id="hitoList"></ul>
+    </div>
+
+    <div class="card insights-section">
+      <div class="card-head">
+        <h2>Distribución del ciclo</h2>
+        <span class="hint">Concentración de la facturación neta</span>
+      </div>
+      <div class="ins-grid">
+        <div class="ins-box">
+          <span class="s-label">🔝 Día más alto en facturación</span>
+          <span class="s-value" id="insHiDay">—</span>
+          <span class="s-sub" id="insHiVal">Facturación neta del día</span>
+        </div>
+        <div class="ins-box">
+          <span class="s-label">📊 Promedio diario</span>
+          <span class="s-value" id="insAvg"><span class="s-cur">$</span>—</span>
+          <span class="s-sub">Facturación neta por día</span>
+        </div>
+      </div>
+      <div class="weekdist">
+        <div class="weekdist-head">
+          <span class="progress-label">Distribución por semana</span>
+          <span class="weekdist-cap">% de la facturación total</span>
+        </div>
+        <div class="weekdist-bar" id="weekBar"></div>
+        <div class="weekdist-legend" id="weekLegend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head chart-head">
+        <div class="ch-titles">
+          <h2>Comparativo interanual por ciclo</h2>
+          <span class="hint" id="cmpYSubtitle">Por ciclo · 2025-2026 vs 2024-2025</span>
+        </div>
+        <div class="chart-summary">
+          <div class="cs-acc">
+            <span class="cs-label">Variación total temporada</span>
+            <span class="cs-value is-empty" id="cmpYVar">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="ch-toolbar">
+        <div class="seg" role="radiogroup" aria-label="Métrica interanual">
+          <button type="button" class="seg-opt" data-cy-metric="fact" aria-pressed="true">Facturación</button>
+          <button type="button" class="seg-opt" data-cy-metric="pts" aria-pressed="false">Puntos</button>
+        </div>
+        <div class="chart-legend">
+          <span class="lg-item"><span class="lg-swatch lg-prev"></span> 2024-2025</span>
+          <span class="lg-item"><span class="lg-swatch lg-bar"></span> 2025-2026</span>
+        </div>
+      </div>
+      <div class="chart-wrap" id="cmpYWrap">
+        <svg id="cmpYChart" viewBox="0 0 800 340" role="img" aria-label="Comparativo de facturación por ciclo entre temporadas"></svg>
+        <div class="chart-tip" id="cmpYTip" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPO DE CICLO -->
+  <section class="panel" id="panel-tipociclo" role="tabpanel" aria-labelledby="tab-tipociclo" hidden>
+    <div class="card">
+      <div class="card-head">
+        <h2>Distribución histórica por tipo de ciclo</h2>
+        <span class="hint">Fuente: histórico de facturación y puntos consolidado</span>
+      </div>
+      <div class="tc2-controls">
+        <div class="tc2-ctrl">
+          <span class="tc2-key">Métrica</span>
+          <div class="seg" role="radiogroup" aria-label="Métrica">
+            <button type="button" class="seg-opt" data-tc-metric="fact" aria-pressed="true">Facturación</button>
+            <button type="button" class="seg-opt" data-tc-metric="pts" aria-pressed="false">Puntos</button>
+          </div>
+        </div>
+        <div class="tc2-ctrl">
+          <span class="tc2-key">Catálogo</span>
+          <div class="seg" role="radiogroup" aria-label="Catálogo">
+            <button type="button" class="seg-opt" data-tc-cat="c5" aria-pressed="true">5 ciclos</button>
+            <button type="button" class="seg-opt" data-tc-cat="c6" aria-pressed="false">6 ciclos</button>
+          </div>
+        </div>
+        <div class="tc2-ctrl">
+          <span class="tc2-key">Vista</span>
+          <div class="seg" role="radiogroup" aria-label="Vista">
+            <button type="button" class="seg-opt" data-tc-view="weekly" aria-pressed="true">Semanal</button>
+            <button type="button" class="seg-opt" data-tc-view="daily" aria-pressed="false">Diario</button>
+          </div>
+        </div>
+      </div>
+      <div class="tc2-scroll">
+        <table class="tc2-tbl" id="tc2Table"></table>
+      </div>
+      <div class="tc2-note">
+        Los porcentajes indican la distribución del total del ciclo entre sus semanas o días.
+        El promedio histórico muestra el valor absoluto promedio observado en los ciclos analizados.
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastText">Guardado</span>
+</div>
+
+<script>
+  const LOGO_SRC = "data:image/webp;base64,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";
+  document.getElementById('brandLogo').src = LOGO_SRC;
+
+  const KEY = 'biogreen_gestion_comercial_v1';
+  const $ = id => document.getElementById(id);
+  const metaFields = ['metaPuntos','metaFacturacion','metaDir','metaActivos'];
+  const inputFields = ['cicloActual','cicloInicio','cicloTermino', ...metaFields];
+  const allFields  = [...inputFields, 'duracionSemanas'];
+
+  /* ---- Populate cycle dropdown (C1..C16) ---- */
+  (function fillCycles(){
+    const sel = $('cicloActual');
+    sel.innerHTML = '<option value="">Selecciona…</option>' +
+      Array.from({length:16}, (_,i) => `<option value="C${i+1}">Ciclo ${i+1}</option>`).join('');
+  })();
+
+  /* ---- Duration segmented toggle ---- */
+  let duracion = '';
+  const durOpts = [...document.querySelectorAll('.seg-opt[data-dur]')];
+  function setDuracion(v, recompute){
+    duracion = String(v || '');
+    durOpts.forEach(b => b.setAttribute('aria-pressed', b.dataset.dur === duracion));
+    if(recompute) computeTermino();
+  }
+  durOpts.forEach(b => b.addEventListener('click', () => setDuracion(b.dataset.dur, true)));
+
+  /* ---- Auto-compute end date from start + weeks ---- */
+  function computeTermino(){
+    const ini = $('cicloInicio').value;
+    if(ini && duracion){
+      const d = new Date(ini + 'T00:00:00');
+      d.setDate(d.getDate() + (parseInt(duracion,10) * 7) - 1);
+      $('cicloTermino').value = d.toISOString().slice(0,10);
+      $('autoTag').hidden = false;
+    }
+  }
+  $('cicloInicio').addEventListener('change', computeTermino);
+  $('cicloTermino').addEventListener('input', () => { $('autoTag').hidden = true; });
+
+  /* ---- Theme ---- */
+  const rootEl = document.documentElement;
+  $('themeBtn').addEventListener('click', () => {
+    const cur = rootEl.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    rootEl.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ---- Tabs ---- */
+  const tabs = [['tab-resumen','panel-resumen'],['tab-analisis','panel-analisis'],['tab-tipociclo','panel-tipociclo']];
+  tabs.forEach(([t,p]) => $(t).addEventListener('click', () => {
+    tabs.forEach(([tt,pp]) => {
+      const on = tt === t;
+      $(tt).setAttribute('aria-selected', on);
+      $(pp).hidden = !on;
+    });
+    if(t === 'tab-analisis') renderAnalisis();
+  }));
+
+  /* ---- Number formatting ---- */
+  const fmt = new Intl.NumberFormat('es-CL');
+  const onlyDigits = s => (s || '').toString().replace(/[^\d]/g,'');
+  metaFields.forEach(id => {
+    const el = $(id);
+    el.addEventListener('input', () => {
+      const d = onlyDigits(el.value);
+      el.value = d ? fmt.format(+d) : '';
+    });
+  });
+
+  /* ---- Persistence ---- */
+  function readForm(){
+    const o = {};
+    inputFields.forEach(id => o[id] = $(id).value.trim());
+    o.duracionSemanas = duracion;
+    return o;
+  }
+  function writeForm(o){
+    if(!o) return;
+    $('cicloActual').value = o.cicloActual || '';
+    $('cicloInicio').value = o.cicloInicio || '';
+    $('cicloTermino').value = o.cicloTermino || '';
+    setDuracion(o.duracionSemanas, false);
+    $('autoTag').hidden = true;
+    metaFields.forEach(id => {
+      const d = onlyDigits(o[id]);
+      $(id).value = d ? fmt.format(+d) : '';
+    });
+  }
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); }
+    catch { return null; }
+  }
+
+  /* ---- Render compact saved banner ---- */
+  const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const tileDefs = [
+    {id:'metaPuntos',      label:'Meta Puntos',      emoji:'🎯'},
+    {id:'metaFacturacion', label:'Meta Facturación', emoji:'💰', money:true},
+    {id:'metaDir',         label:'Meta DIR',         emoji:'👑'},
+    {id:'metaActivos',     label:'Meta Activos',     emoji:'👥'},
+  ];
+  function fmtShort(s, withYear){
+    if(!s) return '';
+    const [y,m,d] = s.split('-');
+    return `${+d} ${MES[+m-1]}` + (withYear ? ` ${y}` : '');
+  }
+  function cycleState(ini, fin){
+    if(!ini || !fin) return 'Guardado';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const di = new Date(ini+'T00:00:00'), df = new Date(fin+'T00:00:00');
+    if(today > df) return 'Ciclo cerrado';
+    if(today < di) return 'Ciclo programado';
+    return 'Ciclo en curso';
+  }
+  function fmtTile(t, raw){
+    if(raw === '') return '—';
+    const n = +raw;
+    if(t.money){
+      if(n >= 1e6) return '$' + (n/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M';
+      return '$' + fmt.format(n);
+    }
+    return fmt.format(n);
+  }
+  function render(o){
+    o = o || {};
+    const ini = o.cicloInicio, fin = o.cicloTermino;
+    const cNum = o.cicloActual ? o.cicloActual.replace('C','Ciclo ') : 'Ciclo —';
+    let yearLbl = '';
+    if(ini && fin){ const y1=ini.slice(0,4), y2=fin.slice(0,4); yearLbl = y1===y2 ? y1 : `${y1}/${y2}`; }
+    else if(ini || fin){ yearLbl = (ini||fin).slice(0,4); }
+    const durTxt = o.duracionSemanas ? `${o.duracionSemanas} semanas` : '';
+    let daysRange = '';
+    if(ini && fin){
+      const dd = Math.round((new Date(fin+'T00:00:00') - new Date(ini+'T00:00:00'))/86400000) + 1;
+      daysRange = `${dd} días (${fmtShort(ini)} → ${fmtShort(fin,true)})`;
+    }
+    $('sbBadgeText').textContent = cycleState(ini, fin);
+    const parts = [
+      `<b>${cNum}</b>` + (yearLbl ? ` — ${yearLbl}` : ''),
+      durTxt, daysRange
+    ].filter(Boolean);
+    $('sbSub').innerHTML = parts.join('<span class="sep">·</span>');
+    $('sbTiles').innerHTML = tileDefs.map(t => {
+      const raw = onlyDigits(o[t.id]);
+      return `<div class="sb-tile">
+        <span class="t-label">${t.emoji} ${t.label}</span>
+        <span class="t-value ${raw==='' ? 'is-empty' : ''}">${fmtTile(t, raw)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---- Edit / Saved mode toggle ---- */
+  function setMode(mode){
+    const saved = mode === 'saved';
+    $('configForm').hidden = saved;
+    $('savedBanner').hidden = !saved;
+  }
+  $('editBtn').addEventListener('click', () => setMode('edit'));
+
+  /* ---- Toast ---- */
+  let toastTimer;
+  function toast(msg){
+    $('toastText').textContent = msg;
+    const t = $('toast'); t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ---- Comparison "Meta" column ---- */
+  const CMP_KEY = 'biogreen_metas_comparativo_v1';
+  const cmpEdits = [
+    {key:'metaCor', cell:'cellCor', label:'Meta COR'},
+    {key:'metaLid', cell:'cellLid', label:'Meta LID'},
+    {key:'metaSucursales', cell:'cellSuc', label:'Meta Sucursales'},
+  ];
+  function loadCmp(){
+    try { return JSON.parse(localStorage.getItem(CMP_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function cmpMoney(raw){
+    if(raw === '') return '—';
+    const n = +raw;
+    return n >= 1e6 ? '$' + (n/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M'
+                    : '$' + fmt.format(n);
+  }
+  function fillMetaCell(id, raw){
+    $(id).textContent = raw !== '' ? fmt.format(+raw) : '—';
+  }
+  // config-derived meta cells (Puntos/Facturación/DIR)
+  function updateAutoMetas(){
+    const cfg = load() || {};
+    fillMetaCell('cmpMetaPuntos', onlyDigits(cfg.metaPuntos));
+    $('cmpMetaFacturacion').textContent = cmpMoney(onlyDigits(cfg.metaFacturacion));
+    fillMetaCell('cmpMetaDir', onlyDigits(cfg.metaDir));
+    // Title ciclo suffix + Día pill
+    const cNum = cfg.cicloActual ? cfg.cicloActual.replace('C','') : '';
+    $('cmpTitleCiclo').textContent = cNum ? `— Ciclo ${cNum}` : '';
+    const weeks = parseInt(cfg.duracionSemanas, 10);
+    const totalDays = weeks ? weeks * 7 : 0;
+    let dayNum = 0;
+    if(cfg.cicloInicio){
+      const ini = new Date(cfg.cicloInicio + 'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      dayNum = Math.max(1, Math.min(totalDays || 999, Math.round((today - ini)/86400000) + 1));
+    }
+    const pill = $('cmpDayPill');
+    if(totalDays && dayNum){
+      pill.hidden = false;
+      pill.textContent = `Día ${dayNum} de ${totalDays}`;
+    } else {
+      pill.hidden = true;
+    }
+  }
+  // start in edit mode only if nothing saved yet
+  let cmpEditMode = !(function(){
+    const c = loadCmp() || {};
+    return cmpEdits.some(({key}) => onlyDigits(c[key]) !== '');
+  })();
+  function renderCmpEditables(){
+    const cmp = loadCmp() || {};
+    cmpEdits.forEach(({key, cell, label}) => {
+      const prev = document.getElementById(key);
+      const saved = onlyDigits(cmp[key]);
+      const val = (cmpEditMode && prev && prev.value) ? onlyDigits(prev.value) : saved;
+      if(cmpEditMode){
+        $(cell).innerHTML =
+          `<input type="text" inputmode="numeric" id="${key}" class="cmp-input" placeholder="—" aria-label="${label}">`;
+        const inp = $(key);
+        inp.value = val ? fmt.format(+val) : '';
+        inp.addEventListener('input', () => {
+          const d = onlyDigits(inp.value);
+          inp.value = d ? fmt.format(+d) : '';
+        });
+      } else {
+        $(cell).textContent = saved ? fmt.format(+saved) : '—';
+      }
+    });
+    $('saveMetasBtn').textContent = cmpEditMode ? 'Guardar metas' : 'Editar metas';
+    $('cmpFootNote').innerHTML = cmpEditMode
+      ? 'Puntos, Facturación y DIR se toman de la configuración. Completa <b>COR</b>, <b>LID</b> y <b>Sucursales</b> y guarda.'
+      : 'Metas del comparativo guardadas. Puedes editarlas cuando quieras.';
+  }
+  function renderCmpMetas(){ updateAutoMetas(); renderCmpEditables(); }
+  $('saveMetasBtn').addEventListener('click', () => {
+    if(cmpEditMode){
+      const data = {};
+      cmpEdits.forEach(({key}) => data[key] = onlyDigits($(key).value));
+      localStorage.setItem(CMP_KEY, JSON.stringify(data));
+      cmpEditMode = false;
+      renderCmpEditables();
+      try { renderCmpActual(); } catch(e) {}
+      toast('Metas del comparativo guardadas');
+    } else {
+      cmpEditMode = true;
+      renderCmpEditables();
+    }
+  });
+
+  /* ===== Transcurso del ciclo ===== */
+  const MES_TC = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtDLong(d){ return `${String(d.getDate()).padStart(2,'0')} ${MES_TC[d.getMonth()]} ${d.getFullYear()}`; }
+  function fmtDShort(d){ return `${d.getDate()} ${MES_TC[d.getMonth()]}`; }
+  function fmtDRange(a,b){
+    if(a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear())
+      return `${a.getDate()}–${b.getDate()} ${MES_TC[a.getMonth()]}`;
+    return `${a.getDate()} ${MES_TC[a.getMonth()]}–${b.getDate()} ${MES_TC[b.getMonth()]}`;
+  }
+  function renderTranscurso(){
+    const cfg = load() || {};
+    const ini = cfg.cicloInicio;
+    const weeks = parseInt(cfg.duracionSemanas, 10);
+    if(!ini || !weeks){
+      $('tcEmpty').hidden = false;
+      $('tcBody').hidden = true;
+      return;
+    }
+    $('tcEmpty').hidden = true;
+    $('tcBody').hidden = false;
+
+    const totalDays = weeks * 7;
+    const start = new Date(ini + 'T00:00:00');
+    const end = new Date(start); end.setDate(end.getDate() + totalDays - 1);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const rawDay = Math.round((today - start) / 86400000) + 1;
+    const dayDisp = Math.max(1, Math.min(totalDays, rawDay));
+    const remaining = Math.max(0, totalDays - dayDisp);
+    const pct = Math.round((dayDisp / totalDays) * 100);
+
+    $('tcDayNum').textContent = dayDisp;
+    $('tcDayTotal').textContent = totalDays;
+    let remTxt = '';
+    if(rawDay < 1) remTxt = '— por comenzar';
+    else if(rawDay > totalDays) remTxt = '— ciclo finalizado';
+    else if(remaining === 0) remTxt = '— último día';
+    else remTxt = `— quedan ${remaining} días`;
+    $('tcRemaining').textContent = remTxt;
+
+    $('tcIni').textContent = fmtDLong(start);
+    $('tcToday').textContent = fmtDLong(today);
+    $('tcFin').textContent = fmtDLong(end);
+    $('tcDur').textContent = `${totalDays} días · ${weeks} sem`;
+
+    $('tcBarFill').style.width = pct + '%';
+    $('tcBarStart').textContent = fmtDShort(start);
+    $('tcBarEnd').textContent = fmtDShort(end);
+    $('tcPct').textContent = `${pct}% transcurrido`;
+
+    const wrap = $('tcWeeks');
+    wrap.innerHTML = '';
+    const currentWeekIdx = rawDay >= 1 && rawDay <= totalDays ? Math.floor((rawDay - 1) / 7) : -1;
+    for(let w = 0; w < weeks; w++){
+      const wkStart = new Date(start); wkStart.setDate(wkStart.getDate() + w*7);
+      const wkEnd = new Date(start); wkEnd.setDate(wkEnd.getDate() + Math.min((w+1)*7, totalDays) - 1);
+      let state = 'future';
+      if(w < currentWeekIdx || (currentWeekIdx === -1 && rawDay > totalDays)) state = 'past';
+      else if(w === currentWeekIdx) state = 'current';
+
+      const wk = document.createElement('div');
+      wk.className = `tc-week ${state}`;
+      const lbl = document.createElement('div');
+      lbl.className = 'tc-week-label';
+      lbl.innerHTML = `<b>Sem ${w+1}</b><span>${fmtDRange(wkStart, wkEnd)}</span>`;
+      wk.appendChild(lbl);
+      for(let d = 0; d < 7; d++){
+        const dayIdx = w*7 + d + 1;
+        if(dayIdx > totalDays) break;
+        const box = document.createElement('div');
+        let boxState = 'future';
+        if(rawDay >= 1 && dayIdx < rawDay) boxState = 'elapsed';
+        else if(dayIdx === rawDay) boxState = 'current';
+        else if(rawDay > totalDays) boxState = 'elapsed';
+        box.className = `tc-day-box ${boxState}`;
+        box.textContent = dayIdx;
+        wk.appendChild(box);
+      }
+      wrap.appendChild(wk);
+    }
+  }
+
+  /* ===== Métricas para proyectar (catálogo) ===== */
+  const PM_KEY = 'biogreen_metricas_proyeccion_v1';
+  const PM_ROWS_5 = [
+    { key:'apertura', label:'Apertura', fixed:3 },
+    { key:'medio1',   label:'Medio 1',  options:[3,4], def:3 },
+    { key:'medio2',   label:'Medio 2',  fixed:3 },
+    { key:'medio3',   label:'Medio 3',  options:[3,4], def:3 },
+    { key:'cierre',   label:'Cierre',   options:[3,4], def:3 },
+  ];
+  const PM_ROWS_6 = [
+    { key:'apertura', label:'Apertura', fixed:3 },
+    { key:'medio1',   label:'Medio 1',  fixed:3 },
+    { key:'medio2',   label:'Medio 2',  fixed:4 },
+    { key:'medio3',   label:'Medio 3',  fixed:3 },
+    { key:'medio4',   label:'Medio 4',  fixed:4 },
+    { key:'cierre',   label:'Cierre',   fixed:3 },
+  ];
+  const pmRowsFor = count => count === 6 ? PM_ROWS_6 : count === 5 ? PM_ROWS_5 : [];
+  const pmDefaults = count => {
+    const w = {};
+    pmRowsFor(count).forEach(r => { w[r.key] = r.fixed != null ? r.fixed : r.def; });
+    return w;
+  };
+  const cicloNum = s => (s && s[0] === 'C') ? parseInt(s.slice(1), 10) : NaN;
+  const PM_PERIODS = ['2025-2026','2026-2027'];
+  const CICLOS_POR_PERIODO = 16;
+  const pIdx = p => Math.max(0, PM_PERIODS.indexOf(p));
+  const absIdx = (cicloStr, period) => {
+    const n = cicloNum(cicloStr);
+    if(isNaN(n) || !period) return NaN;
+    return pIdx(period) * CICLOS_POR_PERIODO + n;
+  };
+  // Given absolute index, return {ciclo, period} (period as short "'25")
+  const rowLabelAt = (aAbs, i) => {
+    const abs = aAbs + i;
+    const cyc = ((abs - 1) % CICLOS_POR_PERIODO) + 1;
+    const per = PM_PERIODS[Math.floor((abs - 1) / CICLOS_POR_PERIODO)] || '';
+    return { ciclo:cyc, period:per };
+  };
+
+  let pmData = { aperturaC:'', aperturaP:'', cierreC:'', cierreP:'', weeks:{} };
+  function loadPm(){
+    try { return JSON.parse(localStorage.getItem(PM_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function pmCount(){
+    const a = absIdx(pmData.aperturaC, pmData.aperturaP);
+    const c = absIdx(pmData.cierreC, pmData.cierreP);
+    if(isNaN(a) || isNaN(c)) return 0;
+    return c - a + 1;
+  }
+  function updatePmTotal(){
+    const total = Object.values(pmData.weeks).reduce((a,b) => a + (+b || 0), 0);
+    $('pmCatCount').textContent = pmCount() || '—';
+    $('pmTotalSem').textContent = total || '—';
+    $('pmTotalDias').textContent = total ? (total * 7) : '—';
+  }
+  function showWarn(msg){
+    const w = $('pmWarn');
+    if(msg){ w.hidden = false; w.textContent = msg; }
+    else   { w.hidden = true;  w.textContent = ''; }
+  }
+  function renderPmRows(){
+    const wrap = $('pmRows'), tot = $('pmTotalField'), act = $('pmActions');
+    const complete = pmData.aperturaC && pmData.aperturaP && pmData.cierreC && pmData.cierreP;
+    if(!complete){
+      wrap.hidden = true; tot.hidden = true; act.hidden = true; showWarn('');
+      return;
+    }
+    const aAbs = absIdx(pmData.aperturaC, pmData.aperturaP);
+    const cAbs = absIdx(pmData.cierreC, pmData.cierreP);
+    const count = cAbs - aAbs + 1;
+    if(cAbs <= aAbs){
+      wrap.hidden = true; tot.hidden = true; act.hidden = true;
+      showWarn('El cierre debe ser posterior a la apertura.'); return;
+    }
+    if(count !== 5 && count !== 6){
+      wrap.hidden = true; tot.hidden = true; act.hidden = true;
+      showWarn(`El catálogo debe tener 5 o 6 ciclos (seleccionaste ${count}).`); return;
+    }
+    showWarn('');
+    wrap.hidden = false; tot.hidden = false; act.hidden = false;
+
+    // Only show period suffix on each row if the catalog crosses periods
+    const crosses = pmData.aperturaP !== pmData.cierreP;
+    const shortPer = p => p ? "'" + p.slice(2,4) : '';
+    const rows = pmRowsFor(count);
+    const pos = catalogPosition();
+    const activeIdx = pos ? pos.index : -1;
+    wrap.innerHTML = rows.map((r, i) => {
+      const info = rowLabelAt(aAbs, i);
+      const perTag = crosses ? ` ${shortPer(info.period)}` : '';
+      const cicloTag = `<span class="pm-row-lbl-num">· C${info.ciclo}${perTag}</span>`;
+      const rowClass = 'pm-row' + (i === activeIdx ? ' pm-row-current' : '');
+      if(r.fixed != null){
+        return `<div class="${rowClass}"><span class="pm-row-label">${r.label}${cicloTag}</span>
+          <span class="pm-fixed"><b>${r.fixed}</b> semanas</span></div>`;
+      }
+      const cur = pmData.weeks[r.key];
+      const segs = r.options.map(o =>
+        `<button type="button" class="seg-opt" data-pm-key="${r.key}" data-pm-val="${o}" aria-pressed="${cur===o}">${o} semanas</button>`
+      ).join('');
+      return `<div class="${rowClass}"><span class="pm-row-label">${r.label}${cicloTag}</span>
+        <div class="seg" role="radiogroup" aria-label="${r.label} semanas">${segs}</div></div>`;
+    }).join('');
+    wrap.querySelectorAll('.seg-opt[data-pm-key]').forEach(b => {
+      b.addEventListener('click', () => {
+        const k = b.dataset.pmKey, v = +b.dataset.pmVal;
+        pmData.weeks[k] = v;
+        b.parentElement.querySelectorAll('.seg-opt').forEach(x =>
+          x.setAttribute('aria-pressed', +x.dataset.pmVal === v));
+        updatePmTotal();
+      });
+    });
+    updatePmTotal();
+  }
+
+  // Populate ciclo (C1..C16) and período dropdowns
+  (function fillPmOpts(){
+    const cicloOpts = '<option value="">Ciclo…</option>' +
+      Array.from({length:16}, (_,i) => `<option value="C${i+1}">Ciclo ${i+1}</option>`).join('');
+    const periodOpts = '<option value="">Período…</option>' +
+      PM_PERIODS.map(p => `<option value="${p}">${p}</option>`).join('');
+    $('pmAperturaC').innerHTML = cicloOpts;
+    $('pmCierreC').innerHTML   = cicloOpts;
+    $('pmAperturaP').innerHTML = periodOpts;
+    $('pmCierreP').innerHTML   = periodOpts;
+  })();
+
+  function onPmCicloChange(){
+    pmData.aperturaC = $('pmAperturaC').value;
+    pmData.aperturaP = $('pmAperturaP').value;
+    pmData.cierreC   = $('pmCierreC').value;
+    pmData.cierreP   = $('pmCierreP').value;
+    const count = pmCount();
+    if(count === 5 || count === 6){
+      const expectedKeys = pmRowsFor(count).map(r => r.key).sort().join(',');
+      const currentKeys  = Object.keys(pmData.weeks).sort().join(',');
+      if(expectedKeys !== currentKeys) pmData.weeks = pmDefaults(count);
+    } else {
+      pmData.weeks = {};
+    }
+    $('pmSaveNote').textContent = '';
+    renderPmRows();
+  }
+  ['pmAperturaC','pmAperturaP','pmCierreC','pmCierreP'].forEach(id =>
+    $(id).addEventListener('change', onPmCicloChange));
+
+  function pmSetMode(mode){
+    const saved = mode === 'saved';
+    $('pmEdit').hidden = saved;
+    $('pmSaved').hidden = !saved;
+  }
+  // Determine where the current cycle (from Config) falls in this catalog
+  function catalogPosition(){
+    const cfg = load() || {};
+    const cN = cicloNum(cfg.cicloActual);
+    if(isNaN(cN)) return null;
+    const aAbs = absIdx(pmData.aperturaC, pmData.aperturaP);
+    const cAbs = absIdx(pmData.cierreC, pmData.cierreP);
+    if(isNaN(aAbs) || isNaN(cAbs)) return null;
+    const count = cAbs - aAbs + 1;
+    if(count !== 5 && count !== 6) return null;
+    const rows = pmRowsFor(count);
+    // Try each unique candidate period; pick the one that lands within the range
+    const candidates = [...new Set([pmData.aperturaP, pmData.cierreP])];
+    for(const per of candidates){
+      const currAbs = pIdx(per) * CICLOS_POR_PERIODO + cN;
+      if(currAbs >= aAbs && currAbs <= cAbs){
+        const i = currAbs - aAbs;
+        return { row: rows[i], index: i, ciclo: cN, period: per, count };
+      }
+    }
+    return null;
+  }
+  function renderPmSaved(){
+    const aAbs = absIdx(pmData.aperturaC, pmData.aperturaP);
+    const cAbs = absIdx(pmData.cierreC, pmData.cierreP);
+    const count = cAbs - aAbs + 1;
+    const total = Object.values(pmData.weeks).reduce((a,b) => a + (+b || 0), 0);
+    const aN = cicloNum(pmData.aperturaC), cN = cicloNum(pmData.cierreC);
+    $('pmSvApertura').textContent = `C${aN} · ${pmData.aperturaP}`;
+    $('pmSvCierre').textContent   = `C${cN} · ${pmData.cierreP}`;
+    $('pmSvTotal').innerHTML = `<b>${count}</b> ciclos · <b>${total}</b> semanas · ${total*7} días`;
+
+    const pos = catalogPosition();
+    if(pos){
+      $('pmSvCurName').textContent = pos.row.label;
+      const shortP = pmData.aperturaP !== pmData.cierreP ? ` ${"'" + pos.period.slice(2,4)}` : '';
+      $('pmSvCurTag').textContent = `Ciclo ${pos.ciclo}${shortP} · ${pos.index+1} de ${pos.count}`;
+      $('pmSvCurrent').hidden = false;
+    } else {
+      $('pmSvCurrent').hidden = true;
+    }
+  }
+  $('savePmBtn').addEventListener('click', () => {
+    localStorage.setItem(PM_KEY, JSON.stringify(pmData));
+    renderPmSaved();
+    pmSetMode('saved');
+    toast('Métricas para proyectar guardadas');
+  });
+  $('editPmBtn').addEventListener('click', () => { pmSetMode('edit'); });
+
+  (function initPm(){
+    const saved = loadPm();
+    if(saved && saved.aperturaC && saved.aperturaP && saved.cierreC && saved.cierreP){
+      const aAbs = absIdx(saved.aperturaC, saved.aperturaP);
+      const cAbs = absIdx(saved.cierreC, saved.cierreP);
+      const count = cAbs - aAbs + 1;
+      pmData = {
+        aperturaC: saved.aperturaC, aperturaP: saved.aperturaP,
+        cierreC: saved.cierreC,     cierreP: saved.cierreP,
+        weeks: { ...pmDefaults(count), ...(saved.weeks || {}) }
+      };
+      $('pmAperturaC').value = saved.aperturaC;
+      $('pmAperturaP').value = saved.aperturaP;
+      $('pmCierreC').value   = saved.cierreC;
+      $('pmCierreP').value   = saved.cierreP;
+      renderPmRows();
+      if(count === 5 || count === 6){
+        renderPmSaved();
+        pmSetMode('saved');
+      }
+    }
+  })();
+
+  /* ===== Análisis Diario: chart + hitos ===== */
+  const HITOS_KEY = 'biogreen_hitos_v1';
+  const MES_A = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  function loadHitos(){
+    try { return JSON.parse(localStorage.getItem(HITOS_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveHitos(arr){ localStorage.setItem(HITOS_KEY, JSON.stringify(arr)); }
+
+  // Days of the current cycle from saved config duration, fallback 21
+  function cycleDays(){
+    const cfg = load() || {};
+    const weeks = parseInt(cfg.duracionSemanas, 10);
+    const n = weeks ? weeks * 7 : 21;
+    return Array.from({length:n}, (_, i) => ({ n: i + 1, label: `Día ${i + 1}` }));
+  }
+  function moneyShort(n){
+    if(n >= 1e6) return '$' + (n/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M';
+    if(n >= 1e3) return '$' + Math.round(n/1e3) + 'K';
+    return '$' + fmt.format(Math.round(n));
+  }
+  // Deterministic demo data so the design reads as a real chart
+  function demoData(days){
+    const actual = [], proj = [];
+    const base = 9e6, peak = 22e6;
+    for(let i=0;i<days.length;i++){
+      const t = i/(days.length-1);
+      proj.push(base + (peak-base)*t);
+      const wobble = Math.sin(i*1.7)*2.4e6 + Math.cos(i*0.6)*1.6e6;
+      const dip = (i % 7 === 5 || i % 7 === 6) ? -3.2e6 : 0; // weekends lower
+      actual.push(Math.max(1.5e6, base + (peak-base)*t + wobble + dip));
+    }
+    return { actual, proj };
+  }
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs) => {
+    const n = document.createElementNS(SVGNS, tag);
+    for(const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+
+  // Datos reales por día (snapshot desde Google Sheet "Ver Pedidos")
+  const REAL_DAILY = {"C14-2025-2026": {"byDay": {"2026-07-30": {"puntos": 14772, "facturacion": 12801547, "fneta": 10757602, "pedidos": 18}, "2026-07-31": {"puntos": 8699, "facturacion": 7857033, "fneta": 6602548, "pedidos": 22}, "2026-08-01": {"puntos": 2042, "facturacion": 2289913, "fneta": 1924296, "pedidos": 12}, "2026-08-02": {"puntos": 14744, "facturacion": 12622528, "fneta": 10607166, "pedidos": 23}, "2026-08-03": {"puntos": 19780, "facturacion": 18944949, "fneta": 15920125, "pedidos": 46}, "2026-08-04": {"puntos": 12261, "facturacion": 11167415, "fneta": 9384382, "pedidos": 35}, "2026-08-05": {"puntos": 22650, "facturacion": 20053743, "fneta": 16851884, "pedidos": 42}, "2026-08-06": {"puntos": 13509, "facturacion": 12206057, "fneta": 10257190, "pedidos": 36}, "2026-08-07": {"puntos": 2134, "facturacion": 1866313, "fneta": 1568330, "pedidos": 5}}, "stats": {"activos": 602, "incorporaciones_total": 156, "incorporaciones_activos": 79, "lideres_calificados": 26, "coordinadores_calificados": 8, "directores_calificados": 5, "pedidos_total": 239, "fecha_extraccion": "2026-08-07T09:00:12"}}};
+  const chState = { metric: 'puntos' };
+  const fmtInt = n => fmt.format(Math.round(n));
+  function pointsShort(n){
+    if(n >= 1e6) return (n/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M';
+    if(n >= 1e3) return Math.round(n/1e3) + 'k';
+    return fmt.format(Math.round(n));
+  }
+  function getRealSeries(cfg, days, metric){
+    const key = (cfg.cicloActual || '') + '-' + (cfg.aperturaP || '2025-2026');
+    const src = REAL_DAILY[key] || REAL_DAILY[(cfg.cicloActual || '') + '-2025-2026'] || null;
+    const ini = cfg.cicloInicio ? new Date(cfg.cicloInicio + 'T00:00:00') : null;
+    if(!src || !ini) return { actual: days.map(() => 0), hasReal: false };
+    const arr = days.map((_, i) => {
+      const d = new Date(ini); d.setDate(d.getDate() + i);
+      const k = d.toISOString().slice(0,10);
+      const rec = src.byDay[k];
+      if(!rec) return 0;
+      if(metric === 'facturacion') return rec.fneta || rec.facturacion || 0;
+      return rec.puntos || 0;
+    });
+    return { actual: arr, hasReal: true };
+  }
+  function projectionCurve(days, total){
+    // fallback: reparto uniforme si no hay match del histórico
+    return days.map((_, i) => total / days.length);
+  }
+  // Distribuye el total del Forecast usando los % diarios del histórico (Tipo de Ciclo)
+  function forecastProjection(cfg, days, metric){
+    const fc = loadFc() || {};
+    const fcTotal = +onlyDigits(fc[metric] || '');
+    if(!fcTotal) return { arr: days.map(() => 0), source: 'none' };
+
+    const pm = loadPm() || {};
+    const aAbs = absIdx(pm.aperturaC, pm.aperturaP);
+    const cAbs = absIdx(pm.cierreC, pm.cierreP);
+    if(isNaN(aAbs) || isNaN(cAbs)) return { arr: projectionCurve(days, fcTotal), source: 'uniform' };
+    const catCount = cAbs - aAbs + 1;
+    if(catCount !== 5 && catCount !== 6) return { arr: projectionCurve(days, fcTotal), source: 'uniform' };
+    const cat = catCount === 6 ? 'c6' : 'c5';
+
+    const pos = (typeof catalogPosition === 'function') ? catalogPosition() : null;
+    if(!pos) return { arr: projectionCurve(days, fcTotal), source: 'uniform' };
+    const weeks = pm.weeks && pm.weeks[pos.row.key];
+    const durText = `${weeks || (pos.row.fixed != null ? pos.row.fixed : pos.row.def)} semanas`;
+
+    const key = metric === 'facturacion' ? 'fact' : 'pts';
+    const src = (TC_DATA.daily && TC_DATA.daily[key] && TC_DATA.daily[key][cat]) || [];
+    const rowT = src.find(r => r.tipo === pos.row.label && r.dur === durText);
+    if(!rowT) return { arr: projectionCurve(days, fcTotal), source: 'uniform' };
+
+    const arr = days.map((_, i) => (rowT.days[i] || 0) * fcTotal);
+    return { arr, source: 'histórico', tipo: pos.row.label, dur: durText };
+  }
+
+  function renderChart(){
+    const svg = $('salesChart');
+    const days = cycleDays();
+    const cfg = load() || {};
+    const metric = chState.metric;
+    const isMoney = metric === 'facturacion';
+
+    const { actual, hasReal } = getRealSeries(cfg, days, metric);
+    // Proyectado: distribuye el Forecast total según % del histórico (Tipo de Ciclo)
+    const projInfo = forecastProjection(cfg, days, metric);
+    const proj = projInfo.arr;
+    const metaCfg = metric === 'facturacion' ? cfg.metaFacturacion : cfg.metaPuntos;
+
+    const cicloIni = cfg.cicloInicio ? new Date(cfg.cicloInicio + 'T00:00:00') : null;
+    const dateOf = i => {
+      if(!cicloIni) return '';
+      const d = new Date(cicloIni); d.setDate(d.getDate() + i);
+      return `${d.getDate()} ${MES_A[d.getMonth()]}`;
+    };
+    const HITO_CLS = {'Agotado':'h-agotado','Disponibilizado':'h-disponibilizado','Acción Especial':'h-accion','Otros':'h-otros'};
+    const hitoByDay = {};
+    loadHitos().forEach(h => { hitoByDay[+h.dia] = h; });
+
+    // Y-scale: cap fijo 50k / $50M con step 10k / $10M
+    const step = isMoney ? 10e6 : 10e3;
+    const yMax = isMoney ? 50e6 : 50e3;
+
+    const W = 800, H = 340, padL = 60, padR = 14, padT = 14, padB = 46;
+    const plotW = W - padL - padR, plotH = H - padT - padB, baseY = padT + plotH;
+    const yOf = v => baseY - (Math.min(v, yMax) / yMax) * plotH;
+    const band = plotW / days.length;
+    const barW = Math.min(band * 0.62, 26);
+    const cx = i => padL + band * i + band / 2;
+
+    svg.innerHTML = '';
+
+    const steps = Math.round(yMax / step);
+    const yFmt = isMoney ? moneyShort : pointsShort;
+    for(let s = 0; s <= steps; s++){
+      const v = s * step, y = yOf(v);
+      svg.appendChild(el('line', {class:'ch-grid', x1:padL, y1:y, x2:W-padR, y2:y}));
+      const t = el('text', {class:'ch-axis-label', x:padL-10, y:y+4, 'text-anchor':'end'});
+      t.textContent = yFmt(v);
+      svg.appendChild(t);
+    }
+
+    actual.forEach((v, i) => {
+      const h = baseY - yOf(v);
+      const r = el('rect', {class:'ch-bar', x:cx(i)-barW/2, y:yOf(v), width:barW, height:Math.max(0,h), rx:4, ry:4,
+        'data-i':i});
+      svg.appendChild(r);
+    });
+
+    const pts = proj.map((v, i) => `${cx(i)},${yOf(v)}`).join(' ');
+    svg.appendChild(el('polyline', {class:'ch-proj', points:pts}));
+
+    days.forEach((d, i) => {
+      const t = el('text', {class:'ch-axis-label ch-xlabel', x:cx(i), y:baseY+20, 'text-anchor':'middle'});
+      t.textContent = d.n;
+      svg.appendChild(t);
+      const h = hitoByDay[d.n];
+      if(h){
+        const x = cx(i);
+        const cls = 'ch-hito ' + (HITO_CLS[h.tipo] || 'h-otros');
+        svg.appendChild(el('path', {class:cls, d:`M${x-7},${baseY+29} L${x+7},${baseY+29} L${x},${baseY+38} Z`}));
+      }
+    });
+
+    // Update subtitle, legend, demo tag
+    const label = isMoney ? 'Facturación neta' : 'Puntos';
+    $('chartSubtitle').textContent = `${label} por día del ciclo vs. proyectado`;
+    $('lgBar').textContent = isMoney ? 'Facturación por día' : 'Puntos por día';
+    const lgProj = $('lgProj');
+    if(lgProj){
+      if(projInfo.source === 'histórico') lgProj.textContent = `Proyección · patrón ${projInfo.tipo}`;
+      else if(projInfo.source === 'uniform') lgProj.textContent = 'Proyección (uniforme)';
+      else lgProj.textContent = 'Proyección';
+    }
+    const demoTag = $('chartDemoTag');
+    if(demoTag) demoTag.hidden = hasReal;
+
+    // Tooltip
+    const tip = $('chartTip');
+    const showTip = i => {
+      const rect = svg.getBoundingClientRect();
+      const scale = rect.width / W;
+      tip.hidden = false;
+      const ds = dateOf(i);
+      const fmtV = isMoney ? moneyShort : fmtInt;
+      tip.innerHTML =
+        `<b>${days[i].label}</b>` + (ds ? ` · ${ds}` : '') +
+        `<div class="tip-row"><span class="tip-dot" style="background:var(--accent)"></span>Real ${fmtV(actual[i])}</div>` +
+        `<div class="tip-row"><span class="tip-dot" style="background:var(--muted)"></span>Proy. ${fmtV(proj[i])}</div>`;
+      tip.style.left = (cx(i) * scale) + 'px';
+      tip.style.top  = (yOf(Math.max(actual[i], proj[i])) * scale) + 'px';
+    };
+    svg.querySelectorAll('.ch-bar').forEach(bar => {
+      bar.addEventListener('mouseenter', () => showTip(+bar.dataset.i));
+      bar.addEventListener('mouseleave', () => { tip.hidden = true; });
+    });
+
+    // Summary
+    const accReal = actual.reduce((a,b) => a+b, 0);
+    const accProj = proj.reduce((a,b) => a+b, 0);
+    const metaVal = +onlyDigits(metaCfg || '') || 0;
+    const fmtSum = isMoney ? moneyShort : fmtInt;
+    $('csAcum').textContent = fmtSum(accReal);
+    $('csAcum').classList.remove('is-empty');
+    const setPct = (id, num, den) => {
+      const b = $(id);
+      if(!den){ b.textContent = '—'; b.style.color = 'var(--faint)'; return; }
+      const pct = Math.round(num/den*100);
+      b.textContent = pct + '%';
+      b.style.color = pct >= 100 ? 'var(--accent-dark)' : 'var(--warn)';
+    };
+    setPct('csMetaPct', accReal, metaVal);
+    setPct('csProjPct', accReal, accProj);
+  }
+  document.querySelectorAll('[data-ch-metric]').forEach(b => {
+    b.addEventListener('click', () => {
+      chState.metric = b.dataset.chMetric;
+      b.parentElement.querySelectorAll('.seg-opt').forEach(x =>
+        x.setAttribute('aria-pressed', x.dataset.chMetric === chState.metric));
+      renderChart();
+    });
+  });
+
+  // Hitos: day dropdown, list, add/remove
+  const TIPO_CLASS = {'Agotado':'t-agotado','Disponibilizado':'t-disponibilizado','Acción Especial':'t-accion','Otros':'t-otros'};
+  function fillHitoDays(){
+    const sel = $('hitoDia'), prev = sel.value;
+    const days = cycleDays();
+    sel.innerHTML = days.map(d => `<option value="${d.n}">${d.label}</option>`).join('');
+    if(prev && days.some(d => String(d.n) === prev)) sel.value = prev;
+  }
+  function renderHitos(){
+    const list = $('hitoList');
+    const hitos = loadHitos().slice().sort((a,b) => a.dia - b.dia);
+    if(!hitos.length){
+      list.innerHTML = '<li class="hito-empty">Todavía no hay hitos. Agrega el primero arriba.</li>';
+      return;
+    }
+    list.innerHTML = hitos.map(h =>
+      `<li class="hito-item">
+        <span class="hito-day">Día ${h.dia}</span>
+        <span class="hito-type ${TIPO_CLASS[h.tipo] || 't-otros'}">${h.tipo}</span>
+        <span class="hito-text">${h.detalle ? h.detalle.replace(/</g,'&lt;') : '<i style="color:var(--faint)">Sin detalle</i>'}</span>
+        <button type="button" class="hito-del" data-id="${h.id}" aria-label="Eliminar hito">×</button>
+      </li>`).join('');
+    list.querySelectorAll('.hito-del').forEach(btn => btn.addEventListener('click', () => {
+      saveHitos(loadHitos().filter(h => h.id !== btn.dataset.id));
+      renderHitos(); renderChart();
+    }));
+  }
+  $('addHitoBtn').addEventListener('click', () => {
+    const dia = $('hitoDia').value, tipo = $('hitoTipo').value, detalle = $('hitoDetalle').value.trim();
+    if(!dia){ toast('Selecciona un día'); return; }
+    const hitos = loadHitos();
+    hitos.push({ id: 'h' + Date.now(), dia:+dia, tipo, detalle });
+    saveHitos(hitos);
+    $('hitoDetalle').value = '';
+    renderHitos(); renderChart();
+    toast('Hito agregado');
+  });
+
+  // Cycle distribution: highest day, daily average, weekly split
+  const WK_COLORS = ['#63BE8A','#2FA368','#12894C','#006D30'];
+  function renderInsights(){
+    const days = cycleDays();
+    const cfg = load() || {};
+    const { actual, hasReal } = getRealSeries(cfg, days, 'facturacion');
+    const filled = hasReal ? actual.filter(v => v > 0) : actual;
+    if(!filled.length){
+      $('insHiDay').textContent = '—';
+      $('insHiVal').textContent = '';
+      $('insAvg').textContent = '$—';
+      $('weekBar').innerHTML = ''; $('weekLegend').innerHTML = '';
+      return;
+    }
+    const total = actual.reduce((a,b) => a+b, 0);
+    let hi = 0;
+    for(let i=1;i<actual.length;i++) if(actual[i] > actual[hi]) hi = i;
+    $('insHiDay').textContent = 'Día ' + (hi + 1);
+    $('insHiVal').textContent = moneyShort(actual[hi]);
+    $('insAvg').textContent = moneyShort(total / (filled.length || 1));
+
+    const weeks = Math.ceil(days.length / 7);
+    const bar = $('weekBar'), leg = $('weekLegend');
+    bar.innerHTML = ''; leg.innerHTML = '';
+    for(let w=0; w<weeks; w++){
+      const sum = actual.slice(w*7, w*7+7).reduce((a,b) => a+b, 0);
+      const pct = total ? Math.round(sum/total*100) : 0;
+      const color = WK_COLORS[w % WK_COLORS.length];
+      const seg = document.createElement('div');
+      seg.className = 'wk-seg';
+      seg.style.width = pct + '%';
+      seg.style.background = color;
+      seg.textContent = pct >= 8 ? pct + '%' : '';
+      bar.appendChild(seg);
+      const lg = document.createElement('span');
+      lg.className = 'wk-lg';
+      lg.innerHTML = `<span class="wk-dot" style="background:${color}"></span>Semana ${w+1} <b>${pct}%</b> <span class="wk-amt">${moneyShort(sum)}</span>`;
+      leg.appendChild(lg);
+    }
+  }
+
+  // Year-over-year comparison by cycle (grouped bars) — datos reales VENTAS CICLOS
+  const YEARLY_DATA = {"2024-2025": [{"label": "C1", "ciclo": 1, "puntos": 425204, "facturacion": 236988171, "weeks": 3}, {"label": "C2", "ciclo": 2, "puntos": 321489, "facturacion": 220157640, "weeks": 3}, {"label": "C3", "ciclo": 3, "puntos": 387384, "facturacion": 297372865, "weeks": 3}, {"label": "C4", "ciclo": 4, "puntos": 288803, "facturacion": 197922689, "weeks": 4}, {"label": "C5", "ciclo": 5, "puntos": 252244, "facturacion": 174932431, "weeks": 3}, {"label": "C6", "ciclo": 6, "puntos": 315294, "facturacion": 225701048, "weeks": 4}, {"label": "C7", "ciclo": 7, "puntos": 324232, "facturacion": 231967469, "weeks": 3}, {"label": "C8", "ciclo": 8, "puntos": 355165, "facturacion": 255715077, "weeks": 3}, {"label": "C9", "ciclo": 9, "puntos": 432113, "facturacion": 311814906, "weeks": 4}, {"label": "C10", "ciclo": 10, "puntos": 348238, "facturacion": 250808982, "weeks": 3}, {"label": "C11", "ciclo": 11, "puntos": 324046, "facturacion": 223470104, "weeks": 3}, {"label": "C12", "ciclo": 12, "puntos": 365017, "facturacion": 262769625, "weeks": 3}, {"label": "C13", "ciclo": 13, "puntos": 369119, "facturacion": 259866918, "weeks": 3}, {"label": "C14", "ciclo": 14, "puntos": 365460, "facturacion": 263027703, "weeks": 3}, {"label": "C15", "ciclo": 15, "puntos": 355247, "facturacion": 250023640, "weeks": 3}, {"label": "C16", "ciclo": 16, "puntos": 409217, "facturacion": 283676864, "weeks": 4}], "2025-2026": [{"label": "C1", "ciclo": 1, "puntos": 425622, "facturacion": 303994300, "weeks": 3}, {"label": "C2", "ciclo": 2, "puntos": 403593, "facturacion": 287088190, "weeks": 3}, {"label": "C3", "ciclo": 3, "puntos": 372792, "facturacion": 257457465, "weeks": 3}, {"label": "C4", "ciclo": 4, "puntos": 356395, "facturacion": 251316570, "weeks": 4}, {"label": "C5", "ciclo": 5, "puntos": 280900, "facturacion": 193724423, "weeks": 3}, {"label": "C6", "ciclo": 6, "puntos": 308798, "facturacion": 216603603, "weeks": 4}, {"label": "C7", "ciclo": 7, "puntos": 385480, "facturacion": 275774366, "weeks": 3}, {"label": "C8", "ciclo": 8, "puntos": 332250, "facturacion": 256374363, "weeks": 3}, {"label": "C9", "ciclo": 9, "puntos": 293603, "facturacion": 227075781, "weeks": 3}, {"label": "C10", "ciclo": 10, "puntos": 293539, "facturacion": 222622673, "weeks": 3}, {"label": "C11", "ciclo": 11, "puntos": 305679, "facturacion": 224753771, "weeks": 3}, {"label": "C12", "ciclo": 12, "puntos": 328324, "facturacion": 262456263, "weeks": 4}, {"label": "C13", "ciclo": 13, "puntos": 276120, "facturacion": 223775884, "weeks": 3}, {"label": "C14", "ciclo": 14, "puntos": 0, "facturacion": 0, "weeks": 3}]};
+  const cyState = { metric: 'fact' };
+  function renderYearChart(){
+    const svg = $('cmpYChart');
+    const metric = cyState.metric;
+    const key = metric === 'fact' ? 'facturacion' : 'puntos';
+    const prevSeason = YEARLY_DATA['2024-2025'] || [];
+    const currSeason = YEARLY_DATA['2025-2026'] || [];
+    const nCycles = Math.max(prevSeason.length, currSeason.length, 1);
+    const prev = Array.from({length:nCycles}, (_,i) => (prevSeason[i] && prevSeason[i][key]) || 0);
+    const curr = Array.from({length:nCycles}, (_,i) => (currSeason[i] && currSeason[i][key]) || 0);
+
+    const isMoney = metric === 'fact';
+    const fmtBar = v => isMoney ? moneyShort(v) : (v>=1e3 ? Math.round(v/1e3)+'k' : fmt.format(v));
+
+    const W = 800, H = 340, padL = 60, padR = 14, padT = 14, padB = 46;
+    const plotW = W - padL - padR, plotH = H - padT - padB, baseY = padT + plotH;
+    const maxVal = Math.max(...curr, ...prev, 1);
+    const step = isMoney ? 50e6 : 100e3;
+    const yMax = Math.ceil(maxVal / step) * step;
+    const yOf = v => baseY - (v / yMax) * plotH;
+    const band = plotW / nCycles;
+    const innerGap = 4;
+    const barW = Math.min((band * 0.62 - innerGap) / 2, 22);
+    const cx = i => padL + band * i + band / 2;
+    const xPrev = i => cx(i) - barW - innerGap/2;
+    const xCurr = i => cx(i) + innerGap/2;
+
+    svg.innerHTML = '';
+    const steps = Math.max(1, Math.round(yMax / step));
+    for(let s=0; s<=steps; s++){
+      const v = s * step, y = yOf(v);
+      svg.appendChild(el('line', {class:'ch-grid', x1:padL, y1:y, x2:W-padR, y2:y}));
+      const t = el('text', {class:'ch-axis-label', x:padL-10, y:y+4, 'text-anchor':'end'});
+      t.textContent = fmtBar(v);
+      svg.appendChild(t);
+    }
+    for(let i=0;i<nCycles;i++){
+      if(prev[i]>0){
+        const hp = baseY - yOf(prev[i]);
+        svg.appendChild(el('rect', {class:'ch-prevbar', x:xPrev(i), y:yOf(prev[i]), width:barW, height:Math.max(0,hp), rx:4, ry:4, 'data-i':i}));
+      }
+      if(curr[i]>0){
+        const hc = baseY - yOf(curr[i]);
+        svg.appendChild(el('rect', {class:'ch-bar', x:xCurr(i), y:yOf(curr[i]), width:barW, height:Math.max(0,hc), rx:4, ry:4, 'data-i':i}));
+      }
+      const t = el('text', {class:'ch-axis-label ch-xlabel', x:cx(i), y:baseY+20, 'text-anchor':'middle'});
+      t.textContent = 'C' + (i+1);
+      svg.appendChild(t);
+    }
+
+    // Subtítulo
+    const sub = $('cmpYSubtitle');
+    if(sub) sub.textContent = (isMoney ? 'Facturación por ciclo' : 'Puntos por ciclo') + ' · 2025-2026 vs 2024-2025';
+
+    // Variación total temporada (solo hasta ciclos que ambos años tengan datos)
+    const sharedN = Math.min(prev.filter(v=>v>0).length, curr.filter(v=>v>0).length);
+    const sc = curr.slice(0, sharedN).reduce((a,b)=>a+b,0);
+    const sp = prev.slice(0, sharedN).reduce((a,b)=>a+b,0);
+    const vEl = $('cmpYVar');
+    if(sp > 0){
+      const varPct = Math.round((sc - sp)/sp * 100);
+      vEl.textContent = (varPct >= 0 ? '+' : '') + varPct + '%';
+      vEl.classList.remove('is-empty');
+      vEl.style.color = varPct >= 0 ? 'var(--accent-dark)' : 'var(--warn)';
+    } else {
+      vEl.textContent = '—';
+      vEl.classList.add('is-empty');
+      vEl.style.color = 'var(--faint)';
+    }
+
+    // Tooltip
+    const tip = $('cmpYTip');
+    const showTip = i => {
+      const rect = svg.getBoundingClientRect(), scale = rect.width / W;
+      const c = curr[i], p = prev[i];
+      const d = (p>0 && c>0) ? Math.round((c-p)/p*100) : null;
+      tip.hidden = false;
+      const rows = [];
+      if(c>0) rows.push(`<div class="tip-row"><span class="tip-dot" style="background:var(--accent)"></span>2025-26 ${fmtBar(c)}</div>`);
+      if(p>0) rows.push(`<div class="tip-row"><span class="tip-dot" style="background:var(--muted)"></span>2024-25 ${fmtBar(p)}</div>`);
+      if(d !== null) rows.push(`<div class="tip-row" style="color:${d>=0?'#7fe0a3':'#f2a08f'}">${d>=0?'▲ +':'▼ '}${d}% interanual</div>`);
+      tip.innerHTML = `<b>Ciclo ${i+1}</b>` + rows.join('');
+      const topV = Math.max(c || 0, p || 0);
+      tip.style.left = (cx(i) * scale) + 'px';
+      tip.style.top  = (yOf(topV) * scale) + 'px';
+    };
+    svg.querySelectorAll('.ch-bar, .ch-prevbar').forEach(bar => {
+      bar.addEventListener('mouseenter', () => showTip(+bar.dataset.i));
+      bar.addEventListener('mouseleave', () => { tip.hidden = true; });
+    });
+  }
+  document.querySelectorAll('[data-cy-metric]').forEach(b => {
+    b.addEventListener('click', () => {
+      cyState.metric = b.dataset.cyMetric;
+      b.parentElement.querySelectorAll('.seg-opt').forEach(x =>
+        x.setAttribute('aria-pressed', x.dataset.cyMetric === cyState.metric));
+      renderYearChart();
+    });
+  });
+
+  function renderAnalisis(){ fillHitoDays(); renderChart(); renderHitos(); renderInsights(); renderYearChart(); }
+
+  /* ---- Events ---- */
+  $('configForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const data = readForm();
+    localStorage.setItem(KEY, JSON.stringify(data));
+    render(data);
+    updateAutoMetas();
+    try { renderPmRows(); renderPmSaved(); renderTranscurso(); renderAvance(); renderCmpActual(); } catch(e) {}
+    setMode('saved');
+    toast('Configuración guardada');
+  });
+
+  $('clearBtn').addEventListener('click', () => {
+    inputFields.forEach(id => $(id).value = '');
+    setDuracion('', false);
+    $('autoTag').hidden = true;
+    localStorage.removeItem(KEY);
+    render({});
+    updateAutoMetas();
+    try { renderPmRows(); renderPmSaved(); renderTranscurso(); renderAvance(); renderCmpActual(); } catch(e) {}
+    setMode('edit');
+    toast('Formulario limpiado');
+  });
+
+  /* ---- Init ---- */
+  (function init(){
+    const saved = load();
+    if(saved){ writeForm(saved); render(saved); setMode('saved'); }
+    else { render({}); setMode('edit'); }
+    renderCmpMetas();
+    try { renderTranscurso(); } catch(e) {}
+    try { tcRender(); } catch(e) {}
+    try { renderAvance(); } catch(e) {}
+    try { renderCmpActual(); } catch(e) {}
+  })();
+
+  /* ===== Avance a la fecha ===== */
+  function renderAvance(){
+    const cfg = load() || {};
+    const key = (cfg.cicloActual || '') + '-2025-2026';
+    const src = (typeof REAL_DAILY !== 'undefined') ? REAL_DAILY[key] : null;
+
+    let ventas = 0, puntos = 0, diasConDatos = 0;
+    if(src && src.byDay){
+      Object.values(src.byDay).forEach(d => {
+        ventas += (d.fneta || d.facturacion || 0);
+        puntos += (d.puntos || 0);
+        diasConDatos += 1;
+      });
+    }
+    const activos = (src && src.stats && src.stats.activos) || 0;
+    const incorpTot = (src && src.stats && src.stats.incorporaciones_total) || 0;
+    const incorpAct = (src && src.stats && src.stats.incorporaciones_activos) || 0;
+    const pedidos = (src && src.stats && src.stats.pedidos_total) || 0;
+
+    // Metas del ciclo (config)
+    const metaFact = +onlyDigits(cfg.metaFacturacion || '') || 0;
+    const metaPuntos = +onlyDigits(cfg.metaPuntos || '') || 0;
+    const metaActivos = +onlyDigits(cfg.metaActivos || '') || 0;
+
+    const fmtInt2 = n => fmt.format(Math.round(n));
+    const setV = (id, txt, empty) => {
+      const el = $(id); if(!el) return;
+      el.innerHTML = txt;
+      el.classList.toggle('is-empty', !!empty);
+    };
+    const setChip = (id, num, den, label) => {
+      const el = $(id); if(!el) return;
+      if(!den){ el.textContent = `—% ${label}`; el.classList.add('is-empty'); return; }
+      const pct = Math.round(num/den*100);
+      el.textContent = `${pct}% ${label}`;
+      el.classList.remove('is-empty');
+    };
+
+    setV('avVenta', ventas ? `<span class="s-cur">$</span>${moneyShort(ventas).replace('$','')}` : '<span class="s-cur">$</span>—', !ventas);
+    setChip('avVentaPct', ventas, metaFact, 'cumplimiento');
+
+    setV('avPuntos', puntos ? fmtInt2(puntos) : '—', !puntos);
+    setChip('avPuntosPct', puntos, metaPuntos, 'cumplimiento');
+
+    setV('avActivos', activos ? fmtInt2(activos) : '—', !activos);
+    setChip('avActivosPct', activos, metaActivos, 'avance');
+
+    const promDia = diasConDatos ? ventas / diasConDatos : 0;
+    setV('avPromDia', promDia ? `<span class="s-cur">$</span>${moneyShort(promDia).replace('$','')}` : '<span class="s-cur">$</span>—', !promDia);
+
+    const factPorAct = activos ? ventas / activos : 0;
+    setV('avFactPorAct', factPorAct ? `<span class="s-cur">$</span>${moneyShort(factPorAct).replace('$','')}` : '<span class="s-cur">$</span>—', !factPorAct);
+
+    const ptosPorAct = activos ? puntos / activos : 0;
+    setV('avPuntosPorAct', ptosPorAct ? fmtInt2(ptosPorAct) : '—', !ptosPorAct);
+
+    setV('avIncorp', incorpTot ? fmtInt2(incorpTot) : '—', !incorpTot);
+    const subEl = $('avIncorpSub');
+    if(subEl) subEl.textContent = incorpTot ? `${fmtInt2(incorpAct)} activas · ${fmtInt2(incorpTot)} totales` : 'Nuevas · activas';
+
+    setV('avPedidos', pedidos ? fmtInt2(pedidos) : '—', !pedidos);
+
+    // Barras: vs Meta y vs Forecast
+    const fc = (typeof loadFc === 'function') ? (loadFc() || {}) : {};
+    const fcFact = +onlyDigits(fc.facturacion || '') || 0;
+    const setBar = (fillId, pctId, realId, totId, real, tot) => {
+      const money = v => v ? moneyShort(v) : '$—';
+      $(realId).textContent = money(real);
+      $(totId).textContent  = money(tot);
+      const pct = tot ? Math.round(real/tot*100) : 0;
+      const pctEl = $(pctId);
+      if(tot){
+        pctEl.textContent = pct + '%';
+        pctEl.classList.remove('is-empty');
+      } else {
+        pctEl.textContent = '—';
+        pctEl.classList.add('is-empty');
+      }
+      $(fillId).style.width = Math.min(100, pct) + '%';
+    };
+    setBar('apMetaFill','apMetaPct','apMetaReal','apMetaTot', ventas, metaFact);
+    setBar('apFcFill','apFcPct','apFcReal','apFcTot', ventas, fcFact);
+
+    renderWeekProjection();
+  }
+
+  // Proyección semanal usando distribución histórica (Tipo de Ciclo) × Forecast
+  function renderWeekProjection(){
+    const cfg = load() || {};
+    const key = (cfg.cicloActual || '') + '-2025-2026';
+    const src = (typeof REAL_DAILY !== 'undefined') ? REAL_DAILY[key] : null;
+    const ini = cfg.cicloInicio ? new Date(cfg.cicloInicio + 'T00:00:00') : null;
+    const weeks = parseInt(cfg.duracionSemanas, 10);
+    const puntosTag = $('wpPuntosTag'), factTag = $('wpFactTag');
+
+    if(!weeks){
+      $('wpPuntosTbl').innerHTML = '';
+      $('wpFactTbl').innerHTML = '';
+      if(puntosTag) puntosTag.textContent = 'Configura el ciclo';
+      if(factTag) factTag.textContent = 'Configura el ciclo';
+      return;
+    }
+
+    // Real por semana
+    const realPts = new Array(weeks).fill(0);
+    const realFct = new Array(weeks).fill(0);
+    if(src && src.byDay && ini){
+      for(let w=0; w<weeks; w++){
+        for(let d=0; d<7; d++){
+          const idx = w*7 + d;
+          const date = new Date(ini); date.setDate(date.getDate() + idx);
+          const kk = date.toISOString().slice(0,10);
+          const rec = src.byDay[kk];
+          if(rec){
+            realPts[w] += rec.puntos || 0;
+            realFct[w] += rec.fneta || rec.facturacion || 0;
+          }
+        }
+      }
+    }
+
+    // Distribución % por semana desde Tipo de Ciclo
+    const pos = (typeof catalogPosition === 'function') ? catalogPosition() : null;
+    const durText = weeks + ' semanas';
+    const cat = pos ? (pos.count === 6 ? 'c6' : 'c5') : 'c5';
+    const findRow = (metricKey) => {
+      if(!pos || !TC_DATA.weekly || !TC_DATA.weekly[metricKey] || !TC_DATA.weekly[metricKey][cat]) return null;
+      return TC_DATA.weekly[metricKey][cat].find(r => r.tipo === pos.row.label && r.dur === durText) || null;
+    };
+    const rowPts = findRow('pts');
+    const rowFct = findRow('fact');
+    const pctFor = row => {
+      if(row && row.w) return row.w.map(v => v || 0).slice(0, weeks);
+      return new Array(weeks).fill(1/weeks);
+    };
+    const pctPts = pctFor(rowPts);
+    const pctFct = pctFor(rowFct);
+
+    // Forecast totals
+    const fc = (typeof loadFc === 'function') ? (loadFc() || {}) : {};
+    const fcPts = +onlyDigits(fc.puntos || '') || 0;
+    const fcFct = +onlyDigits(fc.facturacion || '') || 0;
+    const projPts = pctPts.map(p => fcPts * p);
+    const projFct = pctFct.map(p => fcFct * p);
+
+    // Semana actual
+    const today = new Date(); today.setHours(0,0,0,0);
+    let curWeekIdx = -1;
+    if(ini){
+      const dayNum = Math.round((today - ini) / 86400000) + 1;
+      if(dayNum >= 1 && dayNum <= weeks*7) curWeekIdx = Math.floor((dayNum-1)/7);
+    }
+
+    const fmtInt2 = n => fmt.format(Math.round(n));
+    const fmtMoneyCell = n => moneyShort(n);
+    const buildTable = (tblId, real, proj, isMoney) => {
+      const fmtV = isMoney ? fmtMoneyCell : fmtInt2;
+      const rows = [];
+      let hasProj = false;
+      proj.forEach(v => { if(v > 0) hasProj = true; });
+      // Real solo hasta la semana actual (incluida); a partir de ahí no suma
+      let totalReal = 0, totalProj = 0;
+      for(let i=0; i<weeks; i++){
+        let state = 'wp-future';
+        if(i < curWeekIdx) state = 'wp-past';
+        else if(i === curWeekIdx) state = 'wp-current';
+        const r = real[i] || 0, p = proj[i] || 0;
+        totalProj += p;
+        if(state !== 'wp-future') totalReal += r;
+        let varCell;
+        if(!p){
+          varCell = '<td class="wp-var na">—</td>';
+        } else if(state === 'wp-future'){
+          varCell = '<td class="wp-var na">—</td>';
+        } else {
+          const pct = Math.round((r - p)/p*100);
+          const cls = pct >= 0 ? 'up' : 'down';
+          const arrow = pct >= 0 ? '▲' : '▼';
+          const sign = pct >= 0 ? '+' : '';
+          varCell = `<td class="wp-var ${cls}">${arrow} ${sign}${pct}%</td>`;
+        }
+        const realCell = (state === 'wp-future') ? '<td>—</td>' : `<td>${fmtV(r)}</td>`;
+        rows.push(`<tr class="${state}"><th scope="row">Sem ${i+1}</th>${realCell}<td class="wp-proj">${p ? fmtV(p) : '—'}</td>${varCell}</tr>`);
+      }
+      // Fila de total
+      let totalVar;
+      if(!totalProj){
+        totalVar = '<td class="wp-var na">—</td>';
+      } else if(!totalReal){
+        totalVar = '<td class="wp-var na">—</td>';
+      } else {
+        const pct = Math.round((totalReal - totalProj)/totalProj*100);
+        const cls = pct >= 0 ? 'up' : 'down';
+        const arrow = pct >= 0 ? '▲' : '▼';
+        const sign = pct >= 0 ? '+' : '';
+        totalVar = `<td class="wp-var ${cls}">${arrow} ${sign}${pct}%</td>`;
+      }
+      const totalRealCell = totalReal ? `<td>${fmtV(totalReal)}</td>` : '<td>—</td>';
+      rows.push(`<tr class="wp-total"><th scope="row">Total</th>${totalRealCell}<td class="wp-proj">${totalProj ? fmtV(totalProj) : '—'}</td>${totalVar}</tr>`);
+      const head = '<thead><tr><th>Semana</th><th>Real</th><th>Proy.</th><th>Var</th></tr></thead>';
+      $(tblId).innerHTML = head + '<tbody>' + rows.join('') + '</tbody>';
+      return hasProj;
+    };
+
+    const hasP = buildTable('wpPuntosTbl', realPts, projPts, false);
+    const hasF = buildTable('wpFactTbl', realFct, projFct, true);
+    const patternLabel = pos ? `patrón ${pos.row.label}` : 'sin patrón';
+    puntosTag.textContent = hasP ? patternLabel : 'Falta Forecast';
+    factTag.textContent = hasF ? patternLabel : 'Falta Forecast';
+  }
+
+  /* ===== Forecast editable ===== */
+  const FC_KEY = 'biogreen_forecast_v1';
+  const FC_KEYS = ['facturacion','puntos','activos','dir','lid','cor'];
+  let fcData = {}, fcMode = 'edit';
+
+  function loadFc(){
+    try { return JSON.parse(localStorage.getItem(FC_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function fcMoneyText(raw){
+    if(raw === '') return '$—';
+    const n = +raw;
+    if(n >= 1e6) return '$' + (n/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M';
+    return '$' + fmt.format(n);
+  }
+  function renderFc(){
+    document.querySelectorAll('.fc-tile[data-fc-key]').forEach(tile => {
+      const key = tile.dataset.fcKey;
+      const isMoney = tile.dataset.fcMoney === '1';
+      const raw = onlyDigits(fcData[key] || '');
+      // remove any existing value/input
+      tile.querySelectorAll('.fc-value, .fc-input-shell').forEach(el => el.remove());
+      if(fcMode === 'edit'){
+        const shell = document.createElement('div');
+        shell.className = 'fc-input-shell';
+        shell.innerHTML = (isMoney ? '<span class="fc-cur">$</span>' : '') +
+          `<input type="text" inputmode="numeric" data-fc-input="${key}" placeholder="—" value="${raw ? fmt.format(+raw) : ''}">`;
+        tile.appendChild(shell);
+        const inp = shell.querySelector('input');
+        inp.addEventListener('input', () => {
+          const d = onlyDigits(inp.value);
+          inp.value = d ? fmt.format(+d) : '';
+          fcData[key] = d;
+        });
+      } else {
+        const val = document.createElement('span');
+        val.className = 'fc-value' + (raw === '' ? ' is-empty' : '');
+        if(isMoney){
+          val.textContent = fcMoneyText(raw);
+        } else {
+          val.textContent = raw ? fmt.format(+raw) : '—';
+        }
+        tile.appendChild(val);
+      }
+    });
+    $('saveFcBtn').textContent = fcMode === 'edit' ? 'Guardar métricas' : 'Editar métricas';
+  }
+  // Ciclo actual + chips de variación (vs Forecast y vs Meta)
+  function renderCmpActual(){
+    const cfg = load() || {};
+    const key = (cfg.cicloActual || '') + '-2025-2026';
+    const src = (typeof REAL_DAILY !== 'undefined') ? REAL_DAILY[key] : null;
+    let ventas = 0, puntos = 0;
+    if(src && src.byDay){
+      Object.values(src.byDay).forEach(d => {
+        ventas += (d.fneta || d.facturacion || 0);
+        puntos += (d.puntos || 0);
+      });
+    }
+    const stats = (src && src.stats) || {};
+    const dir = stats.directores_calificados || 0;
+    const cor = stats.coordinadores_calificados || 0;
+    const lid = stats.lideres_calificados || 0;
+
+    const setCell = (id, val, money) => {
+      const el = $(id); if(!el) return;
+      if(!val){ el.textContent = '—'; return; }
+      el.textContent = money ? moneyShort(val) : fmt.format(val);
+    };
+    setCell('acActPuntos', puntos, false);
+    setCell('acActFacturacion', ventas, true);
+    setCell('acActDir', dir, false);
+    setCell('acActCor', cor, false);
+    setCell('acActLid', lid, false);
+
+    // Chips de variación vs Forecast y vs Meta
+    const fc = (typeof loadFc === 'function') ? (loadFc() || {}) : {};
+    const metaPts = +onlyDigits(cfg.metaPuntos || '') || 0;
+    const metaFact = +onlyDigits(cfg.metaFacturacion || '') || 0;
+    const metaDir = +onlyDigits(cfg.metaDir || '') || 0;
+    const cmpSaved = (typeof loadCmp === 'function') ? (loadCmp() || {}) : {};
+    const metaCor = +onlyDigits(cmpSaved.metaCor || '') || 0;
+    const metaLid = +onlyDigits(cmpSaved.metaLid || '') || 0;
+    const fcFact = +onlyDigits(fc.facturacion || '') || 0;
+    const fcPts = +onlyDigits(fc.puntos || '') || 0;
+    const fcDir = +onlyDigits(fc.dir || '') || 0;
+    const fcCor = +onlyDigits(fc.cor || '') || 0;
+    const fcLid = +onlyDigits(fc.lid || '') || 0;
+
+    const setChip = (id, actual, ref) => {
+      const el = $(id); if(!el) return;
+      if(!actual || !ref){
+        el.textContent = '—';
+        el.className = 'delta-chip is-empty';
+        return;
+      }
+      const pct = Math.round((actual - ref) / ref * 100);
+      const arrow = pct >= 0 ? '▲' : '▼';
+      const sign = pct >= 0 ? '+' : '';
+      el.textContent = `${arrow} ${sign}${pct}%`;
+      el.className = 'delta-chip ' + (pct >= 0 ? 'up' : 'down');
+    };
+    setChip('fcVarPuntos', puntos, fcPts);
+    setChip('fcVarFacturacion', ventas, fcFact);
+    setChip('fcVarDir', dir, fcDir);
+    setChip('fcVarCor', cor, fcCor);
+    setChip('fcVarLid', lid, fcLid);
+    // Meta: chip de cumplimiento (%)
+    const setPctChip = (id, actual, meta) => {
+      const el = $(id); if(!el) return;
+      if(!actual || !meta){
+        el.textContent = '—';
+        el.className = 'delta-chip is-empty';
+        return;
+      }
+      const pct = Math.round(actual/meta*100);
+      el.textContent = pct + '%';
+      el.className = 'delta-chip ' + (pct >= 100 ? 'up' : 'down');
+    };
+    setPctChip('mtVarPuntos', puntos, metaPts);
+    setPctChip('mtVarFacturacion', ventas, metaFact);
+    setPctChip('mtVarDir', dir, metaDir);
+    setPctChip('mtVarCor', cor, metaCor);
+    setPctChip('mtVarLid', lid, metaLid);
+  }
+
+  function renderCmpForecast(){
+    const map = [
+      ['fcAbsPuntos', 'puntos', false],
+      ['fcAbsFacturacion', 'facturacion', true],
+      ['fcAbsDir', 'dir', false],
+      ['fcAbsCor', 'cor', false],
+      ['fcAbsLid', 'lid', false],
+    ];
+    map.forEach(([cellId, key, money]) => {
+      const cell = document.getElementById(cellId);
+      if(!cell) return;
+      const raw = onlyDigits(fcData[key] || '');
+      if(raw === ''){ cell.textContent = '—'; return; }
+      cell.textContent = money ? cmpMoney(raw) : fmt.format(+raw);
+    });
+  }
+  $('saveFcBtn').addEventListener('click', () => {
+    if(fcMode === 'edit'){
+      // read all current inputs
+      const data = {};
+      FC_KEYS.forEach(k => {
+        const el = document.querySelector(`[data-fc-input="${k}"]`);
+        data[k] = el ? onlyDigits(el.value) : '';
+      });
+      fcData = data;
+      localStorage.setItem(FC_KEY, JSON.stringify(fcData));
+      fcMode = 'saved';
+      renderFc();
+      renderCmpForecast();
+      try { renderAvance(); renderCmpActual(); } catch(e) {}
+      const now = new Date().toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+      $('fcSaveNote').innerHTML = `<b>✓ Guardado</b> a las ${now}`;
+      toast('Forecast guardado');
+    } else {
+      fcMode = 'edit';
+      $('fcSaveNote').textContent = '';
+      renderFc();
+    }
+  });
+  (function initFc(){
+    const saved = loadFc();
+    if(saved && FC_KEYS.some(k => (saved[k] || '') !== '')){
+      fcData = saved;
+      fcMode = 'saved';
+    } else {
+      fcData = {};
+      fcMode = 'edit';
+    }
+    renderFc();
+    renderCmpForecast();
+  })();
+
+  /* ===== Tipo de Ciclo ===== */
+  const TC_DATA = {"weekly": {"fact": {"c5": [{"tipo": "Apertura", "dur": "3 semanas", "w": [0.30242251298042616, 0.24824013659041572, 0.4493373504291581, null], "prom": 257318786.33333334}, {"tipo": "Medio 1", "dur": "3 semanas", "w": [0.37516247359539784, 0.15798051775934838, 0.4668570086452538, null], "prom": 245051741.5}, {"tipo": "Medio 1", "dur": "4 semanas", "w": [0.2568652988000516, 0.16519891130541398, 0.2806677946307031, 0.2972679952638313], "prom": 311814906}, {"tipo": "Medio 2", "dur": "3 semanas", "w": [0.3288545650112228, 0.24081727333043496, 0.43032816165834226, null], "prom": 241151765.66666666}, {"tipo": "Medio 3", "dur": "3 semanas", "w": [0.34216050775483453, 0.2629820616695573, 0.3948574305756082, null], "prom": 224111938}, {"tipo": "Medio 3", "dur": "4 semanas", "w": [0.21970487364309785, 0.14283355767191816, 0.23830021796701603, 0.39916135071796793], "prom": 283676866}, {"tipo": "Cierre", "dur": "3 semanas", "w": [0.31350763139431004, 0.27452839332614826, 0.4119639752795417, null], "prom": 283381963}, {"tipo": "Cierre", "dur": "4 semanas", "w": [0.2229096319945697, 0.181280787343985, 0.15442257516255195, 0.44138700549889337], "prom": 262456263}], "c6": [{"tipo": "Apertura", "dur": "3 semanas", "w": [0.28822444404241765, 0.26282399750164537, 0.448951558455937, null], "prom": 238807552.665}, {"tipo": "Medio 1", "dur": "3 semanas", "w": [0.2708985912341991, 0.32020879199932206, 0.408892616766479, null], "prom": 277415165.275}, {"tipo": "Medio 2", "dur": "4 semanas", "w": [0.3786146527623423, 0.1407143634794171, 0.11439278387286385, 0.36627819988537674], "prom": 224619629.535}, {"tipo": "Medio 3", "dur": "3 semanas", "w": [0.30089722134936897, 0.17340359824152354, 0.5256991804091075, null], "prom": 184328427}, {"tipo": "Medio 4", "dur": "4 semanas", "w": [0.2859070781694897, 0.16955902564289776, 0.1644542387393786, 0.38007965744823397], "prom": 221152326.5}, {"tipo": "Cierre", "dur": "3 semanas", "w": [0.25865236071920755, 0.20701822848026347, 0.534329410800529, null], "prom": 253870917}]}, "pts": {"c5": [{"tipo": "Apertura", "dur": "3 semanas", "w": [0.30434058167903233, 0.24810113160533076, 0.44755828671563697, null], "prom": 352095.6666666667}, {"tipo": "Medio 1", "dur": "3 semanas", "w": [0.3792861972375157, 0.15360885733603785, 0.4671049454264464, null], "prom": 331296}, {"tipo": "Medio 1", "dur": "4 semanas", "w": [0.2673320226668209, 0.1623360703134035, 0.2808858563663698, 0.2894460506534058], "prom": 432350}, {"tipo": "Medio 2", "dur": "3 semanas", "w": [0.32991215709368277, 0.2396365701306076, 0.43045127277570966, null], "prom": 332829}, {"tipo": "Medio 3", "dur": "3 semanas", "w": [0.34856580628268097, 0.25664093184901887, 0.39479326186830016, null], "prom": 315072.5}, {"tipo": "Medio 3", "dur": "4 semanas", "w": [0.2299150100131881, 0.1403458213256484, 0.23423044986079225, 0.3955087188003712], "prom": 409460}, {"tipo": "Cierre", "dur": "3 semanas", "w": [0.3314200613139682, 0.2600273096001708, 0.40855262908586104, null], "prom": 395831.5}, {"tipo": "Cierre", "dur": "4 semanas", "w": [0.24149620496826305, 0.18467123938548508, 0.15173121672494244, 0.42210133892130947], "prom": 328324}], "c6": [{"tipo": "Apertura", "dur": "3 semanas", "w": [0.3291451523576699, 0.20963095151518543, 0.46122389612714465, null], "prom": 357514}, {"tipo": "Medio 1", "dur": "3 semanas", "w": [0.28948048904276175, 0.2897048944282954, 0.42081461652894286, null], "prom": 378310.885}, {"tipo": "Medio 2", "dur": "4 semanas", "w": [0.3822414550171373, 0.1400152986574109, 0.11471665676236344, 0.36302658956308836], "prom": 322250.5}, {"tipo": "Medio 3", "dur": "3 semanas", "w": [0.31064112280648964, 0.16580126716302546, 0.5235576100304848, null], "prom": 265869.5}, {"tipo": "Medio 4", "dur": "4 semanas", "w": [0.28860580892904386, 0.16948187816160143, 0.1614170387769663, 0.38049527413238843], "prom": 311847.5}, {"tipo": "Cierre", "dur": "3 semanas", "w": [0.2782960786026447, 0.2075984998548883, 0.514105421542467, null], "prom": 354899}]}}, "daily": {"fact": {"c5": [{"tipo": "Apertura", "dur": "3 semanas", "days": [0.0372529776647646, 0.042627589780629034, 0.006029489809539868, 0.03628844127443738, 0.08628998935417799, 0.0452519324346935, 0.04868209266218377, 0.02770163332510355, 0.02628330962424263, 0.0028967077917418905, 0.033439615723147374, 0.07107110701318803, 0.05786050400292123, 0.028987259110071013, 0.036972578394162826, 0.016391508214779794, 0.014192012116063158, 0.03211292932687662, 0.09353273686809542, 0.08289447227676766, 0.17324111323241267, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "3 semanas", "days": [0.046955818104234937, 0.01886205122112956, 0.012334568534376238, 0.03586768633513261, 0.10585263683996304, 0.049216987507105715, 0.1060727250534557, 0.02117493215203288, 0.015531901453554861, 0.00197496454029485, 0.021616255275623088, 0.05325207615388442, 0.031380699247142464, 0.01304968893681582, 0.017405262961577444, 0.014098200155006856, 0.004866058052478684, 0.05222632135425979, 0.09107939761366683, 0.1129210971145047, 0.1742606713937595, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "4 semanas", "days": [0.04652565262547134, 0.02838747548521622, 0.016719864572478135, 0.021871603533924706, 0.08304770394780293, 0.039688567678672806, 0.02062443095648545, 0.01079913415043731, 0.0017875668843105276, 0.006508608026583566, 0.027601778601309072, 0.057787612629397515, 0.027553817456051958, 0.03316039355732404, 0.030693808460843755, 0.010734243089712972, 0.004360051344049601, 0.018832181807241763, 0.1144081322398359, 0.06446449356080494, 0.037174884128214195, 0.07453304044419223, 0.014767347267227822, 0.0040524810574642635, 0.0291319107111576, 0.06000325077467592, 0.04698941493194684, 0.06779055007716661]}, {"tipo": "Medio 2", "dur": "3 semanas", "days": [0.049920810794754605, 0.01951245371833942, 0.014326108389804216, 0.04977265513061825, 0.10301461929858535, 0.04749587036336262, 0.04481204731575834, 0.04122781894566735, 0.02100142892450202, 0.007969401874460255, 0.048351355149453, 0.05766491885952699, 0.039878838567685544, 0.024723511009139793, 0.03746353245651887, 0.029312851931471862, 0.003701637144831079, 0.0437279388666913, 0.0842979894582208, 0.08248074517864785, 0.14934346662196046, null, null, null, null, null, null, null]}, {"tipo": "Medio 3", "dur": "3 semanas", "days": [0.0419831896683701, 0.057106837387662944, 0.005270546988889097, 0.06310507653545881, 0.06442742465597705, 0.05411531669499908, 0.05615211582347746, 0.039078498352907914, 0.029597660254939206, 0.02025986228364149, 0.04215447014696736, 0.05188839605679551, 0.04898293057463097, 0.031020243999674842, 0.02376848394394769, 0.02138618336342261, 0.002174067585815085, 0.03326184703288765, 0.09212439856729096, 0.07290301063747885, 0.1492394394447653, null, null, null, null, null, null, null]}, {"tipo": "Medio 3", "dur": "4 semanas", "days": [0.11134186387972857, 0.030327263274263612, 0.0018128584373179025, 0.01608584465960647, 0.03159870992088583, 0.02562660855115341, 0.0029117249201420607, 0.0007277822929699174, 0.0020196994139099096, 0.003144380479725125, 0.02071459362498738, 0.03928236784736616, 0.040172902220373514, 0.03677183179258615, 0.02888513651303522, 0.0064709083468230365, 0.0022795796115429446, 0.033816606673876606, 0.07138981505809501, 0.05738809875317785, 0.03807007301046537, 0.03800014838009385, 0.023347106492638707, 0.0047094076398884075, 0.042304024185038765, 0.08536193430732558, 0.06508707692787329, 0.1403516527851094]}, {"tipo": "Cierre", "dur": "3 semanas", "days": [0.06132613140237157, 0.01813404404993835, 0.0058388243291264096, 0.023597913322380367, 0.10220881806793046, 0.048706055085093757, 0.053695845137469105, 0.015858218188713726, 0.011862265207048481, 0.022003305834958874, 0.052324891616337625, 0.10019357865765084, 0.03732860725507784, 0.03495752656636089, 0.0354955054073078, 0.02012635504257552, 0.003545121536193184, 0.04668696221855165, 0.08365899596792616, 0.07532535512854782, 0.14712567997843956, null, null, null, null, null, null, null]}, {"tipo": "Cierre", "dur": "4 semanas", "days": [0.047718712660326186, 0.018233845690319838, 0.003682308773862257, 0.053938526130732876, 0.04794470079001315, 0.02301275622445329, 0.028378781724862096, 0.02192310038339607, 0.016556632904584184, 0.011190306401642243, 0.05500604876020809, 0.02230753015027117, 0.035526471700162855, 0.018770697043720384, 0.014827723886322346, 0.025868051013132044, 0.006335078389803943, 0.014016099131915172, 0.033915929070437154, 0.037728705296699284, 0.021730988374241998, 0.04842188124883878, 0.052479185836765495, 0.015873867715627727, 0.053714404978783076, 0.0649553445786889, 0.058150111662604906, 0.14779220947758445]}], "c6": [{"tipo": "Apertura", "dur": "3 semanas", "days": [0.031116316224288357, 0.018037536994730173, 0.005656959739093771, 0.05034035756072688, 0.11353129016858486, 0.04892023182104094, 0.053318025743858855, 0.030112657091853907, 0.0211896006183184, 0.005629319768173007, 0.025056590887561014, 0.05594804687016775, 0.045104913479752755, 0.030534447015411897, 0.04484535875869306, 0.016597491170154768, 0.004722845959012538, 0.024216503824207983, 0.10457621048454917, 0.08946038702866826, 0.18108490879115158, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "3 semanas", "days": [0.03605133452270313, 0.018949041645899254, 0.02288956594606272, 0.03812057882458172, 0.06314826129867207, 0.05586869216265127, 0.03587111683362892, 0.02881997196178698, 0.016221197264176857, 0.0062756290135551965, 0.08165970350807455, 0.12172468564047575, 0.043418992137865924, 0.02208861247338671, 0.035306772866186456, 0.03657521581396538, 0.006750854943865506, 0.02009291640373895, 0.09029706416795315, 0.08086540511497278, 0.13900438745579677, null, null, null, null, null, null, null]}, {"tipo": "Medio 2", "dur": "4 semanas", "days": [0.06862158203585784, 0.07670343542844896, 0.02466979525107157, 0.03972488548072166, 0.08562951574988224, 0.05431586413554717, 0.028949574680812856, 0.021927183613454176, 0.02553296353427716, 0.001751153987807239, 0.02319334957850704, 0.04380934182097683, 0.014993833005477446, 0.00950653793891718, 0.011630857064488747, 0.027206338478301947, 0.008208956665172873, 0.014147199630675412, 0.030808183725197145, 0.015021394621587383, 0.007369853687440326, 0.007175581730486535, 0.026593553298818993, 0.006445124132725989, 0.018088127998478934, 0.04960028888866095, 0.07846101637013814, 0.17991450746606716]}, {"tipo": "Medio 3", "dur": "3 semanas", "days": [0.05185837667892647, 0.03794987085741257, 0.010782425328243049, 0.03470559372809057, 0.0692817147514637, 0.05974252956653289, 0.03657671043869972, 0.027311886082551987, 0.02006612631702217, 0.005418879313715404, 0.02059811696868655, 0.04893007088917435, 0.027805285291128752, 0.02327323337924432, 0.04740842279308335, 0.030593094574609483, 0.006306780885185984, 0.04903932696176049, 0.06986619595034031, 0.09496182593691857, 0.2275235333072093, null, null, null, null, null, null, null]}, {"tipo": "Medio 4", "dur": "4 semanas", "days": [0.04505764943874556, 0.01591794694504378, 0.008091054380112976, 0.03500952317587308, 0.07075764812268434, 0.05735993693016836, 0.05371331917686156, 0.025355821884152776, 0.009899696895117221, 0.00804588415668329, 0.01883102957092337, 0.0647679530515814, 0.028744384472934766, 0.013914255611504951, 0.03301568704048881, 0.015571068387562271, 0.004698456111425986, 0.019260511826449177, 0.037522732097507464, 0.03145188029482475, 0.022933902981120118, 0.028288366208980398, 0.04143266383408361, 0.0027818246804652085, 0.021240251343229707, 0.07588061932506959, 0.05207864046594147, 0.15837729159046401]}, {"tipo": "Cierre", "dur": "3 semanas", "days": [0.03368314142103958, 0.021056511959579836, 0.01166678733822827, 0.016386221191299358, 0.07857147536123643, 0.0510423157292964, 0.04624590771852768, 0.028518231176515585, 0.009834651520953856, 0.0052401177563793176, 0.019281759635350434, 0.06852362494125312, 0.043760638797393246, 0.031859204652417907, 0.039735616900142996, 0.021114570992785284, 0.009043869723762017, 0.04016187486335822, 0.11879679191453033, 0.12051510413853352, 0.18496158226741663, null, null, null, null, null, null, null]}]}, "pts": {"c5": [{"tipo": "Apertura", "dur": "3 semanas", "days": [0.038193218320399666, 0.04413951889969298, 0.005648086173549423, 0.037116806322524086, 0.08878836907014855, 0.044073249031749896, 0.04638133386096771, 0.02726342367178617, 0.025861342608590278, 0.0023592072987739126, 0.033192683427894124, 0.07249355525534254, 0.05831559036511857, 0.028615328977825157, 0.03664629026012817, 0.016105471334968622, 0.013401660722890655, 0.03108056806530801, 0.09358346737203052, 0.08144850783925202, 0.17529232112105894, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "3 semanas", "days": [0.04896225731671979, 0.0184759248526997, 0.012002861489423356, 0.03739405244856563, 0.11053710277214333, 0.04850345310538008, 0.1034105452525838, 0.019684813580604657, 0.014539867671206413, 0.001539408866995074, 0.021482299816478315, 0.055082162175214916, 0.02922009320969767, 0.012060212015840819, 0.016026453684922243, 0.01271521539650343, 0.004041702888051772, 0.05391704095431276, 0.09118582777938762, 0.1126802013909012, 0.17653850333236742, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "4 semanas", "days": [0.05099572105932693, 0.03190470683474037, 0.016639296865965075, 0.0204209552445935, 0.08565282757025558, 0.0409459928298832, 0.020772522262056205, 0.009823060020816468, 0.0014270845379900543, 0.005907251069735169, 0.02732277090320342, 0.0586793107436105, 0.026117728692031918, 0.03305886434601596, 0.03205273505261941, 0.011000346941135653, 0.00369607956516711, 0.01822828726726032, 0.11490921706950387, 0.06389730542384642, 0.037101885046837056, 0.0762692263212675, 0.013359546663582746, 0.003332947843182607, 0.027514744998265294, 0.057936856713310975, 0.04413553833699549, 0.0668971897768012]}, {"tipo": "Medio 2", "dur": "3 semanas", "days": [0.051278584498346, 0.02015849981021285, 0.01360658676577662, 0.050046720688401554, 0.10464933444301228, 0.047315588485378375, 0.042856842402555065, 0.04144270280935055, 0.019888090681200656, 0.007220925259918257, 0.04817689163704685, 0.05744691718570197, 0.04011769807719079, 0.02534334448019854, 0.03683072488675366, 0.028897722253769954, 0.002937444353306553, 0.04346876824635674, 0.08309872837603294, 0.08247478434871962, 0.1527431003107702, null, null, null, null, null, null, null]}, {"tipo": "Medio 3", "dur": "3 semanas", "days": [0.042818716327194535, 0.06034008045767244, 0.004306945226892223, 0.06499297780669529, 0.06525323536646327, 0.053578144712724846, 0.057275706385038365, 0.03734695982670655, 0.028325226733529583, 0.02001920192971459, 0.04134762633996937, 0.051004133969165824, 0.047988954923073264, 0.03060882812685969, 0.0229772512675654, 0.019923985749311666, 0.0016028057034492061, 0.033938220568281906, 0.09246443278927866, 0.07115663855144451, 0.1527299272389688, null, null, null, null, null, null, null]}, {"tipo": "Medio 3", "dur": "4 semanas", "days": [0.12125970790797636, 0.03099936501733991, 0.0014531333952034387, 0.015496019147169443, 0.032232696722512576, 0.02543349777756069, 0.0030405900454256824, 0.000507986128071118, 0.0015483807942167733, 0.0029844185024178187, 0.021376935475992773, 0.03896351291945489, 0.03838225956137352, 0.03658232794412153, 0.029214086846089973, 0.006071411126849997, 0.001951350559273189, 0.03386167146974063, 0.07187271039906218, 0.05396864162555561, 0.037290577834220684, 0.03777658379328872, 0.023154886924241683, 0.0036828994285156057, 0.04179162799785083, 0.0844136179358179, 0.06343232550188052, 0.14125677721877594]}, {"tipo": "Cierre", "dur": "3 semanas", "days": [0.06771568205158003, 0.01832850594255384, 0.005608447028596764, 0.02486664148760268, 0.10780218350484992, 0.04941875520265568, 0.057679846096129285, 0.015478808533428997, 0.01171837006402977, 0.018962614142633925, 0.049037279751611484, 0.0975869782975837, 0.03364184002536433, 0.03360141878551859, 0.03425068495054082, 0.0183310322700442, 0.0033802261821002117, 0.04685579596368657, 0.08304038460809714, 0.07361465674156807, 0.14907984836982402, null, null, null, null, null, null, null]}, {"tipo": "Cierre", "dur": "4 semanas", "days": [0.053392380697116264, 0.0201721470254992, 0.00325897588966996, 0.061539820421291164, 0.05004203165166116, 0.023623006542317953, 0.02946784274070735, 0.020357939108928986, 0.016438030725746518, 0.010757666207770373, 0.058792534204017984, 0.02320573579756582, 0.03720714903570863, 0.017912184305746762, 0.01363287484314275, 0.025898198121367916, 0.005317917666695094, 0.014860320902523117, 0.03487408779132808, 0.03900110866095686, 0.01814670873892862, 0.045616525139800926, 0.04748358328967727, 0.012795287581778975, 0.0522349873905045, 0.06159159854290274, 0.0521710261814549, 0.1502083307951901]}], "c6": [{"tipo": "Apertura", "dur": "3 semanas", "days": [0.032521803341967026, 0.01852095302561578, 0.005567614135390502, 0.051473508729728064, 0.1183184434735423, 0.0475016362995575, 0.055241193351868736, 0.029670166762700203, 0.019497138573594322, 0.005286506262691811, 0.0249332893257327, 0.0564761100264605, 0.04507236080265388, 0.028695379761352002, 0.04262909983944685, 0.016266495857504882, 0.003708945663666318, 0.023985074710360994, 0.10498050425997303, 0.08587356019624406, 0.18378021559994853, null, null, null, null, null, null, null]}, {"tipo": "Medio 1", "dur": "3 semanas", "days": [0.03954612619724119, 0.02021356060109135, 0.02705231439481314, 0.040605136169951865, 0.06474340541377761, 0.05903394770150481, 0.03828599856438177, 0.02981652246141424, 0.01661448361444847, 0.0059157695132139795, 0.03299421321170814, 0.12851220233856078, 0.042889157154439264, 0.03296254613451051, 0.03463157027585923, 0.037409708684432906, 0.0058153230246071295, 0.019298942455753025, 0.0956607420904635, 0.08292584549873577, 0.14507248449909127, null, null, null, null, null, null, null]}, {"tipo": "Medio 2", "dur": "4 semanas", "days": [0.06927374821761331, 0.08068102299298217, 0.0256353364851257, 0.039568596480067525, 0.08413330623226341, 0.054971210285166355, 0.027978234323918813, 0.021449152134752313, 0.025005391768205168, 0.00150348874555664, 0.023864974608262826, 0.04352980057439787, 0.015449161444280149, 0.009213329381955963, 0.011999981380944328, 0.027653952437622285, 0.008153594796594575, 0.013723795618625882, 0.03107054915353118, 0.01533744711024498, 0.00677733626480021, 0.007034899868270181, 0.02615977321990191, 0.005565546058113176, 0.016457693626542085, 0.04893398148334913, 0.07602160431093202, 0.18285309099597982]}, {"tipo": "Medio 3", "dur": "3 semanas", "days": [0.05573599077743028, 0.04041644491000284, 0.010046282104566338, 0.036312927959017485, 0.06892103080646708, 0.06176338391579327, 0.03744506233321235, 0.02365070081374509, 0.021019710797966672, 0.00477489896358928, 0.019575393191020408, 0.0474499707563297, 0.026667218315752653, 0.022663374324621666, 0.04750638941285104, 0.029606630320514388, 0.005794196024741461, 0.049422743112692506, 0.06696142280329259, 0.09427745566904064, 0.22998877268735227, null, null, null, null, null, null, null]}, {"tipo": "Medio 4", "dur": "4 semanas", "days": [0.04836979613432848, 0.016161745725073954, 0.0067613176312139745, 0.0357947394159004, 0.07194542204122208, 0.05772693383785344, 0.051845854143451525, 0.02626925019440592, 0.008784742542428592, 0.008568290590753494, 0.019432575217053206, 0.06593767787139547, 0.028073016458365067, 0.012416325287199673, 0.03363983998589054, 0.015105139531341441, 0.004266508469684701, 0.018680605103456017, 0.03627093370958562, 0.03065440640056438, 0.022799605576443616, 0.028994941437721963, 0.0377860973713113, 0.0023713513816849582, 0.02097980583458261, 0.07830109268151901, 0.04958192706370902, 0.16248005836185955]}, {"tipo": "Cierre", "dur": "3 semanas", "days": [0.03781639283289048, 0.022847345301057483, 0.012209107379846098, 0.016809007633157604, 0.08411829844547322, 0.05390547733298769, 0.05059044967723211, 0.029916962290679885, 0.009318144035345267, 0.004794321764783784, 0.018770128966269277, 0.06901259231499667, 0.044156224728725636, 0.03163012575408778, 0.039766243353742896, 0.019291404033260167, 0.0080797635383588, 0.03761210936069135, 0.11410006790664386, 0.11441705950143562, 0.18083877384833433, null, null, null, null, null, null, null]}]}}};
+  const tcState = { metric:'fact', cat:'c5', view:'weekly' };
+  const pct1 = v => (v==null||v==='') ? '—' : (v*100).toFixed(1).replace('.',',') + '%';
+  const promFmt = (v, metric) => {
+    if(v==null) return '—';
+    if(metric === 'fact'){
+      if(v >= 1e6) return '$' + (v/1e6).toLocaleString('es-CL',{maximumFractionDigits:1}) + 'M';
+      return '$' + fmt.format(Math.round(v));
+    }
+    return fmt.format(Math.round(v));
+  };
+  function tcRender(){
+    const tbl = $('tc2Table');
+    if(!tbl) return;
+    const { metric, cat, view } = tcState;
+    const rows = TC_DATA[view][metric][cat] || [];
+    if(view === 'weekly'){
+      const head = `<thead><tr>
+        <th>Tipo de Ciclo</th><th>Duración</th>
+        <th>Sem 1</th><th>Sem 2</th><th>Sem 3</th><th>Sem 4</th>
+        <th>Total</th><th>Prom. Histórico</th>
+      </tr></thead>`;
+      const body = rows.map(r => {
+        const cells = r.w.map(v => v==null
+          ? '<td class="tc2-empty">—</td>'
+          : `<td>${pct1(v)}</td>`).join('');
+        const total = r.w.reduce((a,b)=>a+(b||0),0);
+        return `<tr>
+          <th scope="row">${r.tipo}</th>
+          <td class="tc2-dur">${r.dur}</td>
+          ${cells}
+          <td class="tc2-total">${pct1(total)}</td>
+          <td class="tc2-prom">${promFmt(r.prom, metric)}</td>
+        </tr>`;
+      }).join('');
+      tbl.innerHTML = head + '<tbody>' + body + '</tbody>';
+    } else {
+      const dayHead = Array.from({length:28}, (_,i) => `<th>D${i+1}</th>`).join('');
+      const head = `<thead><tr>
+        <th>Tipo de Ciclo</th><th>Duración</th>${dayHead}<th>Total</th>
+      </tr></thead>`;
+      const body = rows.map(r => {
+        const cells = r.days.map(v => v==null
+          ? '<td class="tc2-empty">—</td>'
+          : `<td>${pct1(v)}</td>`).join('');
+        const total = r.days.reduce((a,b)=>a+(b||0),0);
+        return `<tr>
+          <th scope="row">${r.tipo}</th>
+          <td class="tc2-dur">${r.dur}</td>
+          ${cells}
+          <td class="tc2-total">${pct1(total)}</td>
+        </tr>`;
+      }).join('');
+      tbl.innerHTML = head + '<tbody>' + body + '</tbody>';
+    }
+  }
+  document.querySelectorAll('[data-tc-metric], [data-tc-cat], [data-tc-view]').forEach(b => {
+    b.addEventListener('click', () => {
+      let key, val;
+      if(b.dataset.tcMetric){ key='metric'; val=b.dataset.tcMetric; }
+      else if(b.dataset.tcCat){ key='cat'; val=b.dataset.tcCat; }
+      else { key='view'; val=b.dataset.tcView; }
+      tcState[key] = val;
+      const attr = 'data-tc-' + (key==='metric'?'metric':key==='cat'?'cat':'view');
+      b.parentElement.querySelectorAll('.seg-opt').forEach(x =>
+        x.setAttribute('aria-pressed', x.getAttribute(attr) === val));
+      tcRender();
+    });
+  });
+  tcRender();
+
+  // ==== FINAL BOOTSTRAP ====
+  // Asegura que TODO el estado se cargue desde localStorage y todas las vistas se re-rendericen,
+  // sin depender del orden de los IIFEs individuales. Cualquier fallo aislado no rompe el resto.
+  (function finalBoot(){
+    // 1. Re-cargar Forecast en memoria + refrescar UI
+    try {
+      const savedFc = loadFc();
+      if(savedFc && FC_KEYS.some(k => (savedFc[k] || '') !== '')){
+        fcData = savedFc;
+        fcMode = 'saved';
+      }
+      renderFc();
+    } catch(e) {}
+    // 2. Re-cargar Métricas para proyectar en memoria + refrescar UI
+    try {
+      const savedPm = loadPm();
+      if(savedPm && savedPm.aperturaC && savedPm.aperturaP && savedPm.cierreC && savedPm.cierreP){
+        const aAbs = absIdx(savedPm.aperturaC, savedPm.aperturaP);
+        const cAbs = absIdx(savedPm.cierreC, savedPm.cierreP);
+        const count = cAbs - aAbs + 1;
+        pmData = {
+          aperturaC: savedPm.aperturaC, aperturaP: savedPm.aperturaP,
+          cierreC: savedPm.cierreC,     cierreP: savedPm.cierreP,
+          weeks: { ...pmDefaults(count), ...(savedPm.weeks || {}) }
+        };
+        document.getElementById('pmAperturaC').value = savedPm.aperturaC;
+        document.getElementById('pmAperturaP').value = savedPm.aperturaP;
+        document.getElementById('pmCierreC').value   = savedPm.cierreC;
+        document.getElementById('pmCierreP').value   = savedPm.cierreP;
+        renderPmRows();
+        if(count === 5 || count === 6){
+          renderPmSaved();
+          pmSetMode('saved');
+        }
+      }
+    } catch(e) {}
+    // 3. Re-renderizar todas las vistas dependientes ya con fcData y pmData disponibles
+    try { renderAvance(); } catch(e) {}
+    try { renderCmpActual(); } catch(e) {}
+    try { renderCmpForecast(); } catch(e) {}
+    try { renderTranscurso(); } catch(e) {}
+  })();
+</script>
